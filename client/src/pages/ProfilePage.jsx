@@ -97,33 +97,20 @@ const Button = styled.button`
   &:hover {
     opacity: 0.9;
   }
-`; 
-const ConfirmButton = styled.button`
-  margin-top: 20px;
-  padding: 10px;
-  background-color: green;
-  color: white;
-  border: none;
-  width: 100%;
-  border-radius: 4px;
-  cursor: pointer;
-
-  &:hover {
-    background-color: darkgreen;
-  }
-`;
+`;  
 
 const ModalBackdrop = styled.div`
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
+  width: ${({ width }) => width || '100%'};
   height: 100%;
   background: rgba(0,0,0,0.3);
   display: flex;
   justify-content: center;
   align-items: center;
 `;
+
  
 const Modal = styled.div`
   background: white;
@@ -133,26 +120,6 @@ const Modal = styled.div`
   max-height: 90vh;
   overflow-y: auto;
   padding: 25px;
-`;
-
-const RoundedResetButton = styled.button`
-  padding: 5px 8px;
-  background-color: transparent;
-  color: black;
-  border: 2px solid black;
-  border-radius: 10px;
-  cursor: pointer;
-  font-size: 1rem;
-  font-weight: 650;
-  margin-left: 9px;
-  margin-bottom: 15px;
-  width: ${({ width }) => width || 'auto'};  
-  transition: background-color 0.3s ease, color 0.3s ease;
-
-  &:hover {
-    background-color: #d4edda;  
-    border-color: black; 
-  }
 `;
  
 const FormRow = styled.div`
@@ -188,6 +155,62 @@ const SmallButton = styled.button`
   &:hover {
     background-color: #005fa3;
   }
+`; 
+
+const ModalContent = styled.div`
+  background: white;
+  padding: 0 40px; 0px; 40px;
+  border-radius: 8px; 
+  height: 200px;
+`;
+
+const CloseButton = styled.button` 
+  color: red;
+  border: none; 
+  background: none;
+  border-radius: 4px;
+  cursor: pointer;
+  float: right;
+  font-size: 35px;
+  padding-top: 15px;
+`; 
+
+const Title = styled.div` 
+  color: black;    
+  font-size: 21px;
+  font-weight: 700;
+  margin-top: 25px;
+`; 
+
+const InputField = styled.input`
+  padding: 10px;
+  margin: 10px 0;
+  width: ${({ width }) => width || '100%'};
+  border: 1px solid #ccc;
+  border-radius: 4px;
+`;
+
+const SearchButton = styled.button`
+  background: #4caf50;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 10px;
+  margin-bottom: 10px;
+`;
+
+const InvoiceDetails = styled.div`
+  margin-top: 20px;
+`;
+
+const InvoiceImage = styled.img`
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin-top: 20px;
 `;
 
 const ProfilePage = () => {  
@@ -196,6 +219,10 @@ const ProfilePage = () => {
   const [invoices, setInvoices] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  const [invoiceId, setInvoiceId] = useState('');
+  const [invoiceData, setInvoiceData] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const user = useSelector((state) => state.auth.user);
 
@@ -284,6 +311,32 @@ const ProfilePage = () => {
         setLoading(false);
     }
   };
+
+  const fetchInvoiceData = async (id) => {
+    try {
+    
+      const response = await fetch(`http://localhost:3010/api/invoices/${id}`);
+      if (!response.ok) {
+        throw new Error('Invoice not found');
+      }
+      const data = await response.json();
+      setIsModalOpen(false);
+      setInvoiceData(data)
+      console.log('data ========>', data,  );
+    } catch (error) {
+      console.error('Error fetching invoice data:', error);
+      alert('Failed to fetch invoice data');
+    }
+  };
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setInvoiceData(null);  
+  };
  
   return (
     <PageContainer> 
@@ -304,13 +357,13 @@ const ProfilePage = () => {
           {user.roles &&  
             <Invoices> 
               {ACCOUNTANT && 
-                  <RoundedButton width="121px" onClick={() => setCreateModalOpen(true)}>New Invoice</RoundedButton>
+                <RoundedButton width="121px" onClick={() => setCreateModalOpen(true)}>New Invoice</RoundedButton>
               }
               {(ACCOUNTANT || ADMIN) &&
-                  <RoundedButton width="115px" onClick={handleShowInvoices}>All Invoices</RoundedButton>
+                <RoundedButton width="115px" onClick={() => handleShowInvoices()}>All Invoices</RoundedButton>
               }
               {ACCOUNTANT &&  
-                    <RoundedButton width="55px" onClick={() => navigate('/roles')}>Find</RoundedButton>    
+                <RoundedButton width="55px" onClick={() => openModal()}>Find</RoundedButton>    
               } 
             </Invoices>
           }  
@@ -323,7 +376,7 @@ const ProfilePage = () => {
           />
 
            {createModalOpen && (
-            <ModalBackdrop onClick={() => setCreateModalOpen(false)}>
+            <ModalBackdrop width="100%" onClick={() => setCreateModalOpen(false)}>
               <Modal onClick={e => e.stopPropagation()}>
                 <h2>Create New Invoice</h2> 
                 <form onSubmit={handleSubmit} style={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
@@ -401,6 +454,29 @@ const ProfilePage = () => {
                 </form> 
               </Modal>
             </ModalBackdrop>
+          )}
+
+         
+          {isModalOpen && 
+          <ModalBackdrop width="100%" isOpen={isModalOpen} >
+            <ModalContent>
+              <CloseButton onClick={() => closeModal()}>×</CloseButton>
+              <Title>INVOICE NUMBER:</Title>
+              <InputField width="91%" type="number" placeholder="Enter Invoice ID" value={invoiceId}
+                onChange={(e) => setInvoiceId(e.target.value)}
+              />
+              <SearchButton onClick={() => fetchInvoiceData(invoiceId)}>Search</SearchButton> 
+            </ModalContent>   
+          </ModalBackdrop>  
+          }
+          {invoiceData && (
+            <InvoiceViewer
+              isOpen={(openModal)}
+              onClose={closeModal}
+              invoices={[invoiceData]}
+              loading={loading}
+              error={error}
+            />
           )}
         </ > 
       : navigate('/signin') 

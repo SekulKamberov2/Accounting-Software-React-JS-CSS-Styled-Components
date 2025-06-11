@@ -97,7 +97,7 @@ export function InvoiceViewer({ isOpen, onClose, invoices, loading, error }) {
 
   return (
     <ModalBackdrop onClick={onClose}>
-      <Modal onClick={e => e.stopPropagation()}>
+      <Modal >
         <h1>INVOICES</h1> 
         {loading && <p>Loading...</p>}
 
