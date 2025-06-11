@@ -5,38 +5,59 @@ import styled from 'styled-components';
 import { useSelector } from 'react-redux';
 
 const UserCard = styled.div`
-  background-color: white;
-  padding: 30px;
-  border-radius: 10px;
-  border-left: 6px solid rgb(10, 86, 60);
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.07);
   display: flex;
   flex-direction: column;
-  justify-content: space-between; 
-
+  justify-content: center;  
+   align-items: center; 
+  padding: 10px;
+  border-radius: 30px;   
   span {
     font-size: 18px;
     color: #555;
     margin-bottom: 4px;
-  }
-
+  } 
   strong {
     color: #222;
   }
 `;
 
+
+const RoundedButton = styled.button`
+  padding: 5px 8px;
+  background-color: transparent;
+  color: black;
+  border: 2px solid black;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 650;
+  margin-left: 9px;
+  width: ${({ width }) => width || 'auto'};  
+  transition: background-color 0.3s ease, color 0.3s ease;
+
+  &:hover {
+    background-color: #d4edda;  
+    border-color: black; 
+  }
+`;
+ 
 const PageContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  flex-direction: column;
-  height: 100vh;
-  background-color: #f4f4f9;
-  padding: 40px;
+  flex-direction: column; 
+  padding: 30px;
   box-sizing: border-box;
-`;
+`; 
 
- 
+ const Invoices = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row; 
+  padding: 30px;
+  box-sizing: border-box;
+`; 
 
 const ProfileHeader = styled.div`
   font-size: 37px;
@@ -44,15 +65,14 @@ const ProfileHeader = styled.div`
   color: #333; 
   width: 85%;
   text-align: center;  
-  margin-bottom: 19px;
+  margin-bottom: 3px;
 `;
 
 const UserNameHeader = styled.div`
   font-size: 37px;
   font-weight: 700;
   color: #333;
-  margin-top: 11px;
-   
+  margin-top: 11px; 
   text-align: center; 
 `;  
   
@@ -125,93 +145,42 @@ const RoundedResetButton = styled.button`
 
 const ProfilePage = () => {  
   const user = useSelector((state) => state.auth.user);
-  const ACCOUNTANT = user?.roles === "accountant";
-  const [isModalResetPassOpen, setIsModalResetPassOpen] = useState(false); 
-  const navigate = useNavigate();   
-  const [newPassword, setNewPassword] = useState('');
-  const [passwordError, setPasswordError] = useState('');
+  const ACCOUNTANT = user?.roles === "accountant"; 
+  const ADMIN = user?.roles === "admin"; 
+  const navigate = useNavigate();    
 
-  const handleResetPassword = async () => {  
-        if (!newPassword || newPassword.length < 8) {
-          setPasswordError('Password must be at least 8 characters');
-          return;
-        } 
-        
-        try {  
-          const token = localStorage.getItem('token');  
-            const response = await fetch('http://localhost:5003/api/HR/me/reset-password', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify({
-              Id: user.id,
-              NewPassword: newPassword
-            })
-          });
-          
-          if (response) { 
-            setIsModalResetPassOpen(false); 
-            setNewPassword('');
-            setPasswordError('');
-          } else {
-            const errorData = await response.json();
-            setPasswordError(errorData.message || 'Failed to reset password');
-          }
-        } catch (err) {
-          console.error('Error:', err); 
-          setPasswordError('An unexpected error occurred.' + err);
-        }
-    }
+   
   return (
-    <PageContainer>
-      {isModalResetPassOpen && user && (
-        <ModalBackdrop onClick={() => setIsModalResetPassOpen(false)}>
-          <Modal onClick={(e) => e.stopPropagation()}>
-            <h3>Reset Password for {user.UserName}</h3>
-            <input
-              type="password"
-              placeholder="Enter new password"
-              value={newPassword}
-              onChange={(e) => {
-                setNewPassword(e.target.value);
-                setPasswordError('');
-              }}
-              style={{
-                width: '100%',
-                padding: '10px',
-                marginTop: '10px',
-                borderRadius: '4px',
-                border: '1px solid #ccc'
-              }}
-            />
-            {passwordError && (
-              <p style={{ color: 'red', marginTop: '5px' }}>{passwordError}</p>
-            )}
-            <ConfirmButton onClick={handleResetPassword}>Confirm Reset</ConfirmButton>
-          </Modal>
-        </ModalBackdrop>
-      )}
+    <PageContainer> 
       {user?.id > 0 ?  
-        < > 
-          <UserNameHeader>{ user.userName}</UserNameHeader> 
-          <ProfileHeader>{ user.roles ? user?.roles : "Not Accountant"}</ProfileHeader>
-          {ACCOUNTANT && 
-            <>  
-              <RoundedResetButton width="111px" onClick={(e) => {
-                e.stopPropagation();   
-                setIsModalResetPassOpen(true);
-              }}>Reset Pass</RoundedResetButton>    
-            </>
-          } 
+        <>  
+          <ProfileHeader>{ user.roles ? "Accountant" : "Not Accountant"}</ProfileHeader> 
           <UserCard>  
-            <span><strong>ID: </strong> { user.id}</span>
-            <span><strong>Email: </strong> { user.email}</span>
-            <span><strong>Name: </strong> { user.name}</span> 
+            <span><strong>ID: </strong> { user.id}</span> 
+            <span>{ user.name}</span> 
+            <span><strong> { user.roles ? user.roles : "Not ACCOUNTANT"}</strong></span>
+            <img src={user.picture} alt="User Avatar"
+              style={{ width: '200px', height: '200px', borderRadius: '100%' }}
+            /> 
+            <span>{ user.email}</span>
             <span><strong>Created: </strong> { new Date(user.dateCreated).toLocaleString()}</span>
-            <span><strong>Your Roles: </strong>{ user.roles ? user.roles : "Not ACCOUNTANT"}</span>
+             
           </UserCard> 
+          {user.roles &&  
+            <Invoices> 
+              {ACCOUNTANT && 
+                  <RoundedButton width="121px" onClick={() => window.location.href = '/signup'}>New Invoice</RoundedButton>
+              }
+              {(ACCOUNTANT || ADMIN) &&
+                  <RoundedButton width="115px" onClick={() => navigate('/users')}>All Invoices</RoundedButton>
+              }
+              {ACCOUNTANT && 
+                  <>  
+                    <RoundedButton width="55px" onClick={() => navigate('/roles')}>Find</RoundedButton>    
+                  </>
+              } 
+            </Invoices>
+          }  
         </ > 
       : navigate('/signin') }
     </PageContainer>

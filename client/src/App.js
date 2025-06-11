@@ -3,6 +3,7 @@ import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp';
 import UserLayout from './components/UserLayout'; 
 import ProfilePage from './pages/ProfilePage'; 
+import AllUsers from './pages/AllUsers'; 
 
 import './App.css';
 
@@ -21,6 +22,12 @@ function App() {
                  
               }
             />
+                <Route path="/users" element={
+          
+                  <AllUsers />
+                
+                }
+            />  
             <Route path="/profile" element={
                  
                   <ProfilePage />

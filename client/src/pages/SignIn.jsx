@@ -112,15 +112,16 @@ const SignIn = () => {
    
       if (!data.token || !isValidJwt(data.token)) throw new Error('Invalid token received');  
       const decodedToken = decodeJwt(data.token);
-         
+         console.log(data);
       const user = {
         id: data.user.id,
-        userName: data.user.name,
+        name: data.user.name,
         email: data.user.email, 
         roles: data.user.role,  
+        picture: data.user.picture,
         dateCreated: new Date(decodedToken.exp * 1000).toLocaleString(),
       };
-       
+        console.log(data.user);
       dispatch(setCredentials({ token: data.token, user }));
  
       localStorage.setItem('token', data.token);
