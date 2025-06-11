@@ -73,7 +73,7 @@ const RoundedButton = styled.button`
   }
 `;
  
-const UserLayout = () => {
+const UserLayout = () => { 
   const navigate = useNavigate(); 
   let user = null;
   try {
@@ -106,8 +106,11 @@ const UserLayout = () => {
                 {user.roles &&  
                 <> 
                     {ACCOUNTANT && 
+                    <>
+ 
                         <RoundedButton width="80px" onClick={() => window.location.href = '/signup'}>SignUp</RoundedButton>
-                    }
+                    </>
+                   }
                     {(ACCOUNTANT || ADMIN) &&
                         <RoundedButton width="70px" onClick={() => navigate('/users')}>Users</RoundedButton>
                     }

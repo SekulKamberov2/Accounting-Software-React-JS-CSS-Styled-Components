@@ -63,9 +63,16 @@ const PageContainer = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    flex-direction: row; 
-    padding: 30px;
-    box-sizing: border-box;
+    flex-direction: row;  
+    box-sizing: border-box; 
+  `; 
+const Payments = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;  
+    box-sizing: border-box; 
+    margin-top: 9px;
   `; 
 
   const ProfileHeader = styled.div`
@@ -75,15 +82,7 @@ const PageContainer = styled.div`
     width: 85%;
     text-align: center;  
     margin-bottom: 3px;
-  `;
-
-const UserNameHeader = styled.div`
-  font-size: 37px;
-  font-weight: 700;
-  color: #333;
-  margin-top: 11px; 
-  text-align: center; 
-`;  
+  `;   
   
 const Button = styled.button`
   padding: 10px 20px;
@@ -303,7 +302,8 @@ const handleUpdateInvoice = (invoice) => {
       body: JSON.stringify(newInvoice),
     });
 
-    if (!response.ok) throw new Error(isUpdating ? 'Failed to update invoice' : 'Failed to create invoice');
+    if (!response.ok) 
+      setError(isUpdating ? 'Failed to update invoice' : 'Failed to create invoice');
 
     setCreateModalOpen(false);
     setIsUpdating(false);
@@ -353,7 +353,7 @@ const handleUpdateInvoice = (invoice) => {
 
     try {
       const response = await fetch('http://localhost:3010/api/invoices');
-      if (!response.ok) throw new Error('Failed to fetch invoices');
+      if (!response.ok) setError('Failed to fetch invoices');
       const data = await response.json();
      
       setInvoices(data);
@@ -394,6 +394,14 @@ const handleUpdateInvoice = (invoice) => {
       {user?.id > 0 ?  
         <>  
           <ProfileHeader>{ user.roles ? "Accountant" : "Not Accountant"}</ProfileHeader> 
+          <Payments> 
+              <RoundedButton width="111px" onClick={() => window.location.href = '/signup'}>Payments</RoundedButton>
+              <RoundedButton width="70px" onClick={() => window.location.href = '/signup'}>Find</RoundedButton>
+              <RoundedButton width="80px" onClick={() => window.location.href = '/signup'}>Create</RoundedButton>
+              <RoundedButton width="111px" onClick={() => window.location.href = '/signup'}>Payments</RoundedButton>
+              <RoundedButton width="70px" onClick={() => window.location.href = '/signup'}>Find</RoundedButton>
+              <RoundedButton width="80px" onClick={() => window.location.href = '/signup'}>Create</RoundedButton>
+             </Payments> 
           <UserCard>  
             <span><strong>ID: </strong> { user.id}</span> 
             <span>{ user.name}</span> 
@@ -405,10 +413,11 @@ const handleUpdateInvoice = (invoice) => {
             <span><strong>Created: </strong> { new Date(user.dateCreated).toLocaleString()}</span>
              
           </UserCard> 
-          {user.roles &&  
+          {user.roles == 'accountant' && 
+          <> 
             <Invoices> 
               {ACCOUNTANT && 
-                <RoundedButton width="121px" onClick={() => setCreateModalOpen(true)}>New Invoice</RoundedButton>
+                <RoundedButton width="59px" onClick={() => setCreateModalOpen(true)}>New</RoundedButton>
               }
               {(ACCOUNTANT || ADMIN) &&
                 <RoundedButton width="115px" onClick={() => handleShowInvoices()}>All Invoices</RoundedButton>
@@ -417,6 +426,12 @@ const handleUpdateInvoice = (invoice) => {
                 <RoundedButton width="55px" onClick={() => openModal()}>Find</RoundedButton>    
               } 
             </Invoices>
+             <Payments> 
+              <RoundedButton width="111px" onClick={() => window.location.href = '/signup'}>Payments</RoundedButton>
+              <RoundedButton width="70px" onClick={() => window.location.href = '/signup'}>Find</RoundedButton>
+              <RoundedButton width="80px" onClick={() => window.location.href = '/signup'}>Create</RoundedButton>
+            </Payments>  
+            </>        
           }
           {error && <ErrorMessage>{error}</ErrorMessage>}
   
