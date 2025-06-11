@@ -231,11 +231,11 @@ const ProfilePage = () => {
   const navigate = useNavigate();    
   
   const [newInvoice, setNewInvoice] = useState({
-    CustomerId: '',
-    Date: '',
-    TaxRate: '',
+    customer_id: '',
+    date: '',
+    tax_rate: '',
     items: [
-      { Description: '', Quantity: '', UnitPrice: '' }
+      { description: '', quantity: '', unit_price: '' }
     ],
   });
 
@@ -256,7 +256,7 @@ const ProfilePage = () => {
   const addItem = () => {
     setNewInvoice(prev => ({
       ...prev,
-      items: [...prev.items, { Description: '', Quantity: '', UnitPrice: '' }]
+      items: [...prev.items, { description: '', quantity: '', unit_price: '' }]
     }));
   };
 
@@ -280,11 +280,11 @@ const ProfilePage = () => {
       if (!response.ok) throw new Error('Failed to create invoice');
  
       setCreateModalOpen(false);
-      setNewInvoice({
-        CustomerId: '',
-        Date: '',
-        TaxRate: '',
-        items: [{ Description: '', Quantity: '', UnitPrice: '' }],
+      setNewInvoice({   
+        customer_id: '',
+        date: '',
+        tax_rate: '',
+        items: [{ description: '', quantity: '', unit_price: '' }],
       });
 
       alert('Invoice created successfully!');
@@ -302,7 +302,7 @@ const ProfilePage = () => {
       const response = await fetch('http://localhost:3010/api/invoices');
       if (!response.ok) throw new Error('Failed to fetch invoices');
       const data = await response.json();
-      console.log(data);
+     
       setInvoices(data);
     } catch (err) {
         setError(err.message || 'Unknown error');
@@ -322,7 +322,7 @@ const ProfilePage = () => {
       const data = await response.json();
       setIsModalOpen(false);
       setInvoiceData(data)
-      console.log('data ========>', data,  );
+    
     } catch (error) {
       console.error('Error fetching invoice data:', error);
       alert('Failed to fetch invoice data');
@@ -383,17 +383,17 @@ const ProfilePage = () => {
                   <div style={{ display: 'flex', gap: '20px', marginBottom: '25px', flexWrap: 'wrap' }}>
                     <FormRow style={{ flex: '1 1 200px', minWidth: '200px' }}>
                       <Label htmlFor="CustomerId">Customer ID</Label>
-                      <Input id="CustomerId" name="CustomerId" type="number" value={newInvoice.CustomerId}
+                      <Input id="CustomerId" name="customer_id" type="number" value={newInvoice.customer_id}
                         onChange={handleInvoiceChange} required />
                     </FormRow>
                     <FormRow style={{ flex: '1 1 200px', minWidth: '200px' }}>
                       <Label htmlFor="Date">Date</Label>
-                      <Input id="Date" name="Date" type="date" value={newInvoice.Date}
+                      <Input id="Date" name="date" type="date" value={newInvoice.date}
                         onChange={handleInvoiceChange} required />
                     </FormRow>
                     <FormRow style={{ flex: '1 1 200px', minWidth: '200px' }}>
                       <Label htmlFor="TaxRate">Tax Rate (decimal)</Label>
-                      <Input id="TaxRate" name="TaxRate" type="number" step="0.01" value={newInvoice.TaxRate}
+                      <Input id="TaxRate" name="tax_rate" type="number" step="0.01" value={newInvoice.tax_rate}
                         onChange={handleInvoiceChange} required />
                     </FormRow>
                   </div>
@@ -404,9 +404,9 @@ const ProfilePage = () => {
                       <FormRow style={{ width: '100%'}}>
                         <Label>Description</Label>
                         <Textarea
-                          name="Description"
+                          name="description"
                           rows="3"
-                          value={item.Description}
+                          value={item.description}
                           onChange={(e) => handleItemChange(index, e)}
                           required
                           style={{ width: '100%' }}
@@ -416,10 +416,10 @@ const ProfilePage = () => {
                         <FormRow style={{ flex: '1 1 150px', minWidth: '150px' }}>
                           <Label>Quantity</Label>
                           <Input
-                            name="Quantity"
+                            name="quantity"
                             type="number"
                             min="1"
-                            value={item.Quantity}
+                            value={item.quantity}
                             onChange={(e) => handleItemChange(index, e)}
                             required
                           />
@@ -427,11 +427,11 @@ const ProfilePage = () => {
                         <FormRow style={{ flex: '1 1 150px', minWidth: '150px' }}>
                           <Label>Unit Price</Label>
                           <Input
-                            name="UnitPrice"
+                            name="unit_price"
                             type="number"
                             step="0.01"
                             min="0"
-                            value={item.UnitPrice}
+                            value={item.unit_price}
                             onChange={(e) => handleItemChange(index, e)}
                             required
                           />
