@@ -110,7 +110,6 @@ const ModalBackdrop = styled.div`
   justify-content: center;
   align-items: center;
 `;
-
  
 const Modal = styled.div`
   background: white;
@@ -202,17 +201,13 @@ const SearchButton = styled.button`
   margin-bottom: 10px;
 `;
 
-const InvoiceDetails = styled.div`
+const ErrorMessage = styled.div`
+  color: red;
   margin-top: 20px;
+  font-weight: bold;
+  font-size: 30px;
 `;
-
-const InvoiceImage = styled.img`
-  max-width: 100%;
-  height: auto;
-  border-radius: 8px;
-  margin-top: 20px;
-`;
-
+  
 const ProfilePage = () => {  
   const [modalOpen, setModalOpen] = useState(false);
   const [createModalOpen, setCreateModalOpen] = useState(false); 
@@ -223,6 +218,9 @@ const ProfilePage = () => {
   const [invoiceId, setInvoiceId] = useState('');
   const [invoiceData, setInvoiceData] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [editingInvoiceId, setEditingInvoiceId] = useState(null);
 
   const user = useSelector((state) => state.auth.user);
 
@@ -239,6 +237,28 @@ const ProfilePage = () => {
     ],
   });
 
+const handleUpdateInvoice = (invoice) => {
+ 
+  setModalOpen(false);
+  setIsModalOpen(false);  
+
+ 
+  setNewInvoice({
+    customer_id: invoice.CustomerId,
+    date: invoice.Date?.substring(0, invoice.Date.indexOf('T')),  
+    tax_rate: invoice.TaxRate,
+    items: invoice.items.map(item => ({
+      description: item.Description,
+      quantity: item.Quantity,
+      unit_price: item.UnitPrice
+    }))
+  });
+
+  setEditingInvoiceId(invoice.Id);
+  setIsUpdating(true);
+  setCreateModalOpen(true);
+};
+  
   const handleInvoiceChange = (e) => {
     const { name, value } = e.target;
     setNewInvoice(prev => ({ ...prev, [name]: value }));
@@ -268,30 +288,63 @@ const ProfilePage = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
- 
+  e.preventDefault();
+
+  const url = isUpdating
+    ? `http://localhost:3010/api/invoices/${editingInvoiceId}`
+    : 'http://localhost:3010/api/invoices';
+
+  const method = isUpdating ? 'PUT' : 'POST';
+
+  try {
+    const response = await fetch(url, {
+      method,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newInvoice),
+    });
+
+    if (!response.ok) throw new Error(isUpdating ? 'Failed to update invoice' : 'Failed to create invoice');
+
+    setCreateModalOpen(false);
+    setIsUpdating(false);
+    setEditingInvoiceId(null);
+    setNewInvoice({
+      customer_id: '',
+      date: '',
+      tax_rate: '',
+      items: [{ description: '', quantity: '', unit_price: '' }],
+    });
+
+    alert(isUpdating ? 'Invoice updated successfully!' : 'Invoice created successfully!'); //TO DO: IMPLEMENT NOTIDIER FOR MY APP
+    handleShowInvoices();  
+  } catch (err) {
+    setError(err.message || 'An unexpected error occurred');
+  }
+};
+
+  const handleDeleteInvoice = async (invoiceId) => {
+    if (!window.confirm('Are you sure you want to delete this invoice?')) return;
+
     try {
-      const response = await fetch('http://localhost:3010/api/invoices', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newInvoice)
+      const response = await fetch(`http://localhost:3010/api/invoices/${invoiceId}`, {
+        method: 'DELETE',
       });
 
-      if (!response.ok) throw new Error('Failed to create invoice');
+      if (!response.ok) {
+        setError('Failed to delete invoice');
+      }
  
-      setCreateModalOpen(false);
-      setNewInvoice({   
-        customer_id: '',
-        date: '',
-        tax_rate: '',
-        items: [{ description: '', quantity: '', unit_price: '' }],
-      });
+      setInvoices(prev =>
+        prev.filter(invoice => invoice.Id !== invoiceId)
+      );
 
-      alert('Invoice created successfully!');
-    } catch (err) {
-      alert(err.message);
+      alert('Invoice deleted successfully');
+    } catch (error) {
+      console.error('Error deleting invoice:', error);
+      alert(`Error: ${error.message}`);
     }
   };
+
 
   const handleShowInvoices = async () => {
     setLoading(true);
@@ -313,19 +366,17 @@ const ProfilePage = () => {
   };
 
   const fetchInvoiceData = async (id) => {
-    try {
-    
+    try { 
       const response = await fetch(`http://localhost:3010/api/invoices/${id}`);
-      if (!response.ok) {
-        throw new Error('Invoice not found');
+      if (!response.ok) { 
+        setError('Invoice not found');
       }
-      const data = await response.json();
-      setIsModalOpen(false);
+      const data = await response.json(); 
       setInvoiceData(data)
+      setIsModalOpen(true); 
     
-    } catch (error) {
-      console.error('Error fetching invoice data:', error);
-      alert('Failed to fetch invoice data');
+    } catch (error) { 
+      setError(error.message || 'Error fetching invoice data.');
     }
   };
 
@@ -366,19 +417,23 @@ const ProfilePage = () => {
                 <RoundedButton width="55px" onClick={() => openModal()}>Find</RoundedButton>    
               } 
             </Invoices>
-          }  
+          }
+          {error && <ErrorMessage>{error}</ErrorMessage>}
+  
           <InvoiceViewer
             isOpen={modalOpen}
             onClose={() => setModalOpen(false)}
             invoices={invoices}
             loading={loading}
             error={error}
+            handleDeleteInvoice={handleDeleteInvoice}
+            handleUpdateInvoice={handleUpdateInvoice}
           />
 
            {createModalOpen && (
             <ModalBackdrop width="100%" onClick={() => setCreateModalOpen(false)}>
               <Modal onClick={e => e.stopPropagation()}>
-                <h2>Create New Invoice</h2> 
+                <h2>{isUpdating ? 'Update Invoice' : 'Create New Invoice'}</h2>
                 <form onSubmit={handleSubmit} style={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
                   <div style={{ display: 'flex', gap: '20px', marginBottom: '25px', flexWrap: 'wrap' }}>
                     <FormRow style={{ flex: '1 1 200px', minWidth: '200px' }}>
@@ -448,7 +503,7 @@ const ProfilePage = () => {
                   <SmallButton type="button" onClick={addItem}>+ Add Item</SmallButton>
 
                   <ButtonRow style={{ justifyContent: 'space-between', marginTop: '25px' }}>
-                    <Button type="submit">Create Invoice</Button>
+                    <Button type="submit">{isUpdating ? 'Update Invoice' : 'Create Invoice'}</Button>
                     <Button type="button" onClick={() => setCreateModalOpen(false)}>Cancel</Button>
                   </ButtonRow>
                 </form> 
@@ -460,24 +515,30 @@ const ProfilePage = () => {
           {isModalOpen && 
           <ModalBackdrop width="100%" isOpen={isModalOpen} >
             <ModalContent>
-              <CloseButton onClick={() => closeModal()}>×</CloseButton>
+              <CloseButton onClick={() => {closeModal(); setInvoiceId(0);}}>×</CloseButton>
               <Title>INVOICE NUMBER:</Title>
               <InputField width="91%" type="number" placeholder="Enter Invoice ID" value={invoiceId}
                 onChange={(e) => setInvoiceId(e.target.value)}
               />
-              <SearchButton onClick={() => fetchInvoiceData(invoiceId)}>Search</SearchButton> 
+              <SearchButton onClick={() => {fetchInvoiceData(invoiceId); setInvoiceId(0);}}>Search</SearchButton> 
             </ModalContent>   
           </ModalBackdrop>  
           }
-          {invoiceData && (
-            <InvoiceViewer
-              isOpen={(openModal)}
-              onClose={closeModal}
-              invoices={[invoiceData]}
-              loading={loading}
-              error={error}
-            />
-          )}
+{isModalOpen && invoiceData && (
+  <InvoiceViewer
+    isOpen={isModalOpen}
+    onClose={closeModal}
+    invoices={[invoiceData]}
+    loading={loading}
+    error={error} 
+    handleDeleteInvoice={handleDeleteInvoice}
+    handleUpdateInvoice={(inv) => {
+      closeModal();  
+      handleUpdateInvoice(inv);  
+    }}
+  />
+)}
+
         </ > 
       : navigate('/signin') 
       }

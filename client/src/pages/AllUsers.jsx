@@ -84,16 +84,6 @@ const DeleteButton = styled.button`
     background-color: darkred;
   }
 `;
-
-const PageContainer = styled.div`
-  display: flex;
-  flex-direction: row; 
-  justify-content: center;
-  align-items: center;  
-  box-sizing: border-box;
-  width: 100%;
-`;
- 
  
 const UpdateButton = styled.button` 
   margin-top: 10px;
@@ -110,39 +100,7 @@ const UpdateButton = styled.button`
     background-color: darkred;
   }
 `;
-
-const AssignRoleButton = styled.button` 
-  margin-top: 10px;
-  padding: 6px 10px;
-  font-size: 12px;
-  background-color: #00A693;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  align-self: flex-start;
-
-  &:hover {
-    background-color: darkred;
-  }
-`;
-
-const RestPasswordButton = styled.button`
-  margin-top: 10px;
-  padding: 6px 10px;
-  font-size: 12px;
-  background-color: #004953;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  align-self: flex-start;
-
-  &:hover {
-    background-color: darkred;
-  }
-`;
-
+ 
 const ButtonWrapper = styled.div` 
   border-radius: 10px;  
   display: flex;
@@ -150,47 +108,7 @@ const ButtonWrapper = styled.div`
   flex-direction: row; 
   cursor: pointer; 
   gap: 5px;
-`;
-
-const ModalBackdrop = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.3);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-const Modal = styled.div`
-  background: white;
-  padding: 30px;
-  border-radius: 10px;
-  min-width: 300px;
-`;
-
-const RoleSelect = styled.select`
-  width: 100%;
-  padding: 10px;
-  margin-top: 10px;
-`;
-
-const ConfirmButton = styled.button`
-  margin-top: 20px;
-  padding: 10px;
-  background-color: green;
-  color: white;
-  border: none;
-  width: 100%;
-  border-radius: 4px;
-  cursor: pointer;
-
-  &:hover {
-    background-color: darkgreen;
-  }
-`;
+`; 
 
 const AllUsers = () => {
     const navigate = useNavigate();
