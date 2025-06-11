@@ -48,11 +48,10 @@ const UserCard = styled.div`
   flex-direction: column;
   justify-content: center;  
   align-items: center;  
-
-  border: 1px solid black;
+ 
   min-width: 230px;
   background: white;
-  padding: 18px;
+  padding: 7px 18px 15px 18px;
   border-radius: 25px;   
   span {
     font-size: 18px;
@@ -253,7 +252,7 @@ return (
                 <Important>{user.Name}</Important>
                 <Role><strong>{user.Role}</strong></Role>
                 <img src={user.Picture} alt="User Image"
-                    style={{ width: '170px', height: '170px', borderRadius: '100%', marginTop: '6px' }} />
+                    style={{ objectFit: 'cover', width: '150px', height: '150px', borderRadius: '100%', marginTop: '6px' }} />
                 <Important>{user.Email}</Important>
                 <Created><strong>Created:</strong> {new Date(user.dateCreated).toLocaleString()}</Created>
 
