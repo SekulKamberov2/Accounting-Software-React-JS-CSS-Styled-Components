@@ -96,7 +96,7 @@ export function InvoiceViewer({ isOpen, onClose, invoices, loading, error }) {
   if (!isOpen) return null;
 
   return (
-    <ModalBackdrop onClick={onClose}>
+    <ModalBackdrop >
       <Modal >
         <h1>INVOICES</h1> 
         {loading && <p>Loading...</p>}
