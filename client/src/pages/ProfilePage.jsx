@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';  
+import { Outlet, useNavigate } from 'react-router-dom';
+ 
 import styled from 'styled-components'; 
+
 import {InvoiceViewer} from '../components/InvoiceViewer'
 import { useSelector } from 'react-redux';
 
@@ -20,23 +22,34 @@ const UserCard = styled.div`
     color: #222;
   }
 `;
-
+ 
+const MainContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+ ; 
+  background-color: ${({ theme }) => theme.background || '#f9f9f9'};
+  color: ${({ theme }) => theme.text || '#333'};
+ 
+  height: 100vh;  
+  width: 100vw;   
+`;
 
 const RoundedButton = styled.button`
   padding: 5px 8px;
-  background-color: transparent;
-  color: black;
+  background-color: ${({ backgroundColor }) => backgroundColor || 'transparent'};
+  color: ${({ color }) => color || 'black'};
   border: 2px solid black;
   border-radius: 10px;
   cursor: pointer;
   font-size: 1rem;
   font-weight: 650;
-  margin-left: 9px;
+  margin-left: 3px;
   width: ${({ width }) => width || 'auto'};  
   transition: background-color 0.3s ease, color 0.3s ease;
 
   &:hover {
-    background-color: #d4edda;  
+    background-color: ${({ hoverBackgroundColor }) => hoverBackgroundColor || 'transparent'};
     border-color: black; 
   }
 `;
@@ -65,15 +78,19 @@ const PageContainer = styled.div`
     align-items: center;
     flex-direction: row;  
     box-sizing: border-box; 
+     margin-top: 10px; 
   `; 
-const Payments = styled.div`
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: row;  
-    box-sizing: border-box; 
-    margin-top: 9px;
-  `; 
+
+  const Payments = styled.div`
+  display: flex;
+  flex-wrap: wrap;           
+  justify-content: center;   
+  gap: 5px;                 
+  margin-top: 5px;
+  width: 100%;
+  box-sizing: border-box;
+`;
+
 
   const ProfileHeader = styled.div`
     font-size: 37px;
@@ -114,7 +131,7 @@ const Modal = styled.div`
   background: white;
   border-radius: 10px;
   width: 90%;
-  max-width: 800px;
+  max-width: 700px;
   max-height: 90vh;
   overflow-y: auto;
   padding: 25px;
@@ -390,22 +407,13 @@ const handleUpdateInvoice = (invoice) => {
   };
  
   return (
-    <PageContainer> 
+    <PageContainer>  
       {user?.id > 0 ?  
         <>  
-          <ProfileHeader>{ user.roles ? "Accountant" : "Not Accountant"}</ProfileHeader> 
-          <Payments> 
-              <RoundedButton width="111px" onClick={() => window.location.href = '/signup'}>Payments</RoundedButton>
-              <RoundedButton width="70px" onClick={() => window.location.href = '/signup'}>Find</RoundedButton>
-              <RoundedButton width="80px" onClick={() => window.location.href = '/signup'}>Create</RoundedButton>
-              <RoundedButton width="111px" onClick={() => window.location.href = '/signup'}>Payments</RoundedButton>
-              <RoundedButton width="70px" onClick={() => window.location.href = '/signup'}>Find</RoundedButton>
-              <RoundedButton width="80px" onClick={() => window.location.href = '/signup'}>Create</RoundedButton>
-             </Payments> 
+          <ProfileHeader>{ user.roles ? "Accountant" : user.roles }</ProfileHeader>   
           <UserCard>  
             <span><strong>ID: </strong> { user.id}</span> 
-            <span>{ user.name}</span> 
-            <span><strong> { user.roles ? user.roles : "Not ACCOUNTANT"}</strong></span>
+            <span>{ user.name}</span>  
             <img src={user.picture} alt="User Avatar"
               style={{ width: '200px', height: '200px', borderRadius: '100%' }}
             /> 
@@ -416,20 +424,59 @@ const handleUpdateInvoice = (invoice) => {
           {user.roles == 'accountant' && 
           <> 
             <Invoices> 
-              {ACCOUNTANT && 
-                <RoundedButton width="59px" onClick={() => setCreateModalOpen(true)}>New</RoundedButton>
-              }
               {(ACCOUNTANT || ADMIN) &&
-                <RoundedButton width="115px" onClick={() => handleShowInvoices()}>All Invoices</RoundedButton>
+                <RoundedButton width="91px" hoverBackgroundColor="#A4CCF5" 
+                  onClick={() => handleShowInvoices()}>Invoices</RoundedButton>
               }
+
+              {ACCOUNTANT && 
+                <RoundedButton width="59px" hoverBackgroundColor="#A4CCF5" 
+                 onClick={() => setCreateModalOpen(true)}>New</RoundedButton>
+              }
+     
               {ACCOUNTANT &&  
-                <RoundedButton width="55px" onClick={() => openModal()}>Find</RoundedButton>    
+                <RoundedButton width="55px" hoverBackgroundColor="#A4CCF5" 
+                  onClick={() => openModal()}>Find</RoundedButton>    
               } 
             </Invoices>
-             <Payments> 
-              <RoundedButton width="111px" onClick={() => window.location.href = '/signup'}>Payments</RoundedButton>
-              <RoundedButton width="70px" onClick={() => window.location.href = '/signup'}>Find</RoundedButton>
-              <RoundedButton width="80px" onClick={() => window.location.href = '/signup'}>Create</RoundedButton>
+             <Payments>
+              <RoundedButton width="175px" hoverBackgroundColor="#A4CCF5" onClick={() => navigate('recurring-invoices')}>Recurring Invoices</RoundedButton>
+              <RoundedButton width="53px" hoverBackgroundColor="#A4CCF5" onClick={() => navigate('recurring-invoices/create"')}>New</RoundedButton> 
+              <RoundedButton width="75px" hoverBackgroundColor="orange" onClick={() => navigate('recurring-invoices/update/:id')}>Update</RoundedButton>  
+              <RoundedButton width="75px" hoverBackgroundColor="red" onClick={() => navigate('recurring-invoices/delete/:id')}>Delete</RoundedButton>
+ 
+              <RoundedButton width="82px" hoverBackgroundColor="#53B87D" onClick={() => navigate('accounts')}>Acounts</RoundedButton>
+              <RoundedButton width="55px" hoverBackgroundColor="#53B87D" onClick={() => navigate('accounts/create')}>New</RoundedButton> 
+              <RoundedButton width="75px" hoverBackgroundColor="orange" onClick={() => navigate('accounts/update/:id')}>Update</RoundedButton>
+              <RoundedButton width="75px" hoverBackgroundColor="red" onClick={() => navigate('accounts/delete/:id')}>Delete</RoundedButton> 
+            </Payments>  
+
+            <Payments>  
+              <RoundedButton width="67px" hoverBackgroundColor="#888DBF" onClick={() => navigate('taxes')}>Taxes</RoundedButton>
+              <RoundedButton width="53px" hoverBackgroundColor="#888DBF" onClick={() => navigate('taxes/create')}>New</RoundedButton>
+              <RoundedButton width="75px" hoverBackgroundColor="orange" onClick={() => navigate('taxes/update/:id')}>Update</RoundedButton> 
+              <RoundedButton width="75px" hoverBackgroundColor="red" onClick={() => navigate('taxes/delete/:id')}>Delete</RoundedButton> 
+
+              <RoundedButton width="116px" hoverBackgroundColor="#1AA17F" onClick={() => navigate('bank-transactions')}>Bank Trans.</RoundedButton>
+              <RoundedButton width="55px" hoverBackgroundColor="#1AA17F" onClick={() => navigate('bank-transactions/create')}>New</RoundedButton> 
+              <RoundedButton width="75px" hoverBackgroundColor="orange" onClick={() => navigate('bank-transactions/update/:id')}>Update</RoundedButton>
+              <RoundedButton width="75px" hoverBackgroundColor="red" onClick={() => navigate('bank-transactions/delete/:id')}>Delete</RoundedButton> 
+ 
+              <RoundedButton width="82px" hoverBackgroundColor="#C09BC2" onClick={() => navigate('journal-entries')}>Journal</RoundedButton>
+              <RoundedButton width="53px" hoverBackgroundColor="#C09BC2" onClick={() => navigate('journal-entries/create')}>New</RoundedButton> 
+              <RoundedButton width="75px" hoverBackgroundColor="orange" onClick={() => navigate('journal-entries/update/:id')}>Update</RoundedButton>
+              <RoundedButton width="75px" hoverBackgroundColor="red" onClick={() => navigate('journal-entries/delete/:id')}>Delete</RoundedButton> 
+            </Payments> 
+            <Payments> 
+    
+              <RoundedButton width="97px" hoverBackgroundColor="#F78745" onClick={() => navigate('payments')}>Payments</RoundedButton>
+              <RoundedButton width="53px" hoverBackgroundColor="#F78745" onClick={() => navigate('payments/create')}>New</RoundedButton>
+              <RoundedButton width="75px" hoverBackgroundColor="orange" onClick={() => navigate('payments/update/:id')}>Update</RoundedButton> 
+              <RoundedButton width="75px" hoverBackgroundColor="red" onClick={() => navigate('payments/delete/:id')}>Delete</RoundedButton> 
+              <RoundedButton width="85px" hoverBackgroundColor="#98CAD4" onClick={() => navigate('vendors')}>Vendors</RoundedButton>
+              <RoundedButton width="55px" hoverBackgroundColor="#98CAD4" onClick={() => navigate('vendors/create')}>New</RoundedButton> 
+              <RoundedButton width="75px" hoverBackgroundColor="orange" onClick={() => navigate('vendors/update/:id')}>Update</RoundedButton>
+              <RoundedButton width="75px" hoverBackgroundColor="red" onClick={() => navigate('vendors/delete/:id')}>Delete</RoundedButton> 
             </Payments>  
             </>        
           }
@@ -450,7 +497,7 @@ const handleUpdateInvoice = (invoice) => {
               <Modal onClick={e => e.stopPropagation()}>
                 <h2>{isUpdating ? 'Update Invoice' : 'Create New Invoice'}</h2>
                 <form onSubmit={handleSubmit} style={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
-                  <div style={{ display: 'flex', gap: '20px', marginBottom: '25px', flexWrap: 'wrap' }}>
+                  <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
                     <FormRow style={{ flex: '1 1 200px', minWidth: '200px' }}>
                       <Label htmlFor="CustomerId">Customer ID</Label>
                       <Input id="CustomerId" name="customer_id" type="number" value={newInvoice.customer_id}
@@ -470,8 +517,8 @@ const handleUpdateInvoice = (invoice) => {
 
                   <h3 style={{ marginBottom: '1px', fontWeight: '700' }}>Invoice Items</h3>
                   {newInvoice.items.map((item, index) => (
-                    <div key={index} style={{ marginBottom: 55, borderBottom: '2px solid #eee', paddingBottom: 10 }}>
-                      <FormRow style={{ width: '100%'}}>
+                    <div key={index} style={{ marginBottom: 15, borderBottom: '2px solid #eee', paddingBottom: 10 }}>
+                      <FormRow style={{ width: '97%'}}>
                         <Label>Description</Label>
                         <Textarea
                           name="description"
@@ -539,24 +586,27 @@ const handleUpdateInvoice = (invoice) => {
             </ModalContent>   
           </ModalBackdrop>  
           }
-{isModalOpen && invoiceData && (
-  <InvoiceViewer
-    isOpen={isModalOpen}
-    onClose={closeModal}
-    invoices={[invoiceData]}
-    loading={loading}
-    error={error} 
-    handleDeleteInvoice={handleDeleteInvoice}
-    handleUpdateInvoice={(inv) => {
-      closeModal();  
-      handleUpdateInvoice(inv);  
-    }}
-  />
-)}
-
+          {isModalOpen && invoiceData && (
+            <InvoiceViewer
+              isOpen={isModalOpen}
+              onClose={closeModal}
+              invoices={[invoiceData]}
+              loading={loading}
+              error={error} 
+              handleDeleteInvoice={handleDeleteInvoice}
+              handleUpdateInvoice={(inv) => {
+                closeModal();  
+                handleUpdateInvoice(inv);  
+          }}
+        />
+      )} 
+            <MainContent>
+          <Outlet />  
+      </MainContent>
         </ > 
       : navigate('/signin') 
       }
+ 
     </PageContainer>
   );
 };

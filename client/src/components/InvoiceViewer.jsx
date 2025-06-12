@@ -137,8 +137,8 @@ const ButtonWrapper = styled.div`
     flex-wrap: wrap;
     flex-direction: row; 
     cursor: pointer; 
-    gap: 5px; 
-    margin-top: 50px;
+    gap: 5px;  
+    margin-bottom: 60px;
 `;
 
 const TitleWrapper = styled.div`  
@@ -168,10 +168,7 @@ export function InvoiceViewer({ isOpen, onClose, invoices, loading, error, handl
             .sort((a, b) => a.CustomerId !== b.CustomerId ? a.CustomerId - b.CustomerId : a.Id - b.Id)
             .map(inv => ( 
             <>
-                <ButtonWrapper>
-                    <DeleteButton onClick={() => handleDeleteInvoice(inv.Id)}>Delete</DeleteButton> 
-                    <UpdateButton onClick={() => handleUpdateInvoice(inv)}>Update</UpdateButton> 
-                </ButtonWrapper>
+ 
                
             <div key={inv.Id} style={{ marginBottom: '10px', marginTop: '5px', background: 'lightsteelblue' }}>
                 <InvoiceHeader key={inv.Id}> 
@@ -210,6 +207,10 @@ export function InvoiceViewer({ isOpen, onClose, invoices, loading, error, handl
                     <NOINVOICES>NO INFORMATION</NOINVOICES>
                 }    
             </div>  
+            <ButtonWrapper>
+                <DeleteButton onClick={() => handleDeleteInvoice(inv.Id)}>Delete</DeleteButton> 
+                <UpdateButton onClick={() => handleUpdateInvoice(inv)}>Update</UpdateButton> 
+            </ButtonWrapper>
               </>
         ))} 
         <RoundedButton onClick={onClose}>Close</RoundedButton>
