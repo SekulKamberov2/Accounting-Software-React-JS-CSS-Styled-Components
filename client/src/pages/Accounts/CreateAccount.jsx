@@ -1,28 +1,6 @@
 import { useState } from 'react';
 import styled from 'styled-components';
-
-const ModalBackdrop = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.3);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-const Modal = styled.div`
-  background: white;
-  border-radius: 10px;
-  width: 90%;
-  max-width: 700px;
-  max-height: 90vh;
-  overflow-y: auto;
-  padding: 25px;
-`;
-
+ 
 const FormRow = styled.div`
   margin-bottom: 15px;
 `;
@@ -102,8 +80,43 @@ const RoundedButton = styled.button`
   }
 `;
 
-const CreateAcount = () => {
- const [newAccount, setNewAccount] = useState({
+const ErrorMessage = styled.div`
+  color: red;
+  margin-top: 10px;
+`;
+
+const SuccessMessage = styled.div`
+  color: green;
+  margin-top: 10px;
+  font-weight: bold;
+`;
+
+const ModalBackdrop = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999; /* ensure on top */
+`;
+
+const Modal = styled.div`
+  background: white;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 700px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 25px;
+`;
+
+const CreateAcount = () => { 
+  const [success, setSuccess] = useState(false); 
+  const [newAccount, setNewAccount] = useState({
     name: '',
     type: '',
     code: '',
@@ -114,20 +127,22 @@ const CreateAcount = () => {
     const { name, value } = e.target;
     setNewAccount((prev) => ({ ...prev, [name]: value }));
   }; 
-
+  const handleClose = () => window.history.back()
+   
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
-
+    setSuccess(false);
     try {
       const response = await fetch('http://localhost:3010/api/accounts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newAccount),
       }); 
-      if (!response.ok) throw new Error('Failed to create account');
-
-      alert('Account created successfully!');
+      if (!response.ok) setError('Failed to create account');
+      setSuccess(true);
+    
+      handleClose();
       setNewAccount({ name: '', type: '', code: '' }); 
     } catch (err) {
       setError(err.message);
@@ -137,18 +152,11 @@ const CreateAcount = () => {
   return (
     <ModalBackdrop>
       <Modal onClick={(e) => e.stopPropagation()}>
-        <Title>Create New Account</Title>
-
+        <Title>Create New Account</Title> 
         <form onSubmit={handleSubmit}>
           <FormRow>
             <Label>Name</Label>
-            <Input
-              name="name"
-              type="text"
-              value={newAccount.name}
-              onChange={handleChange}
-              required
-            />
+            <Input name="name" type="text" value={newAccount.name} onChange={handleChange} required />
           </FormRow>
 
           <FormRow>
@@ -174,7 +182,8 @@ const CreateAcount = () => {
           </ButtonRow>
         </form>
  
-        {error && <div style={{ color: 'red' }}>{error}</div>}
+         {error && <ErrorMessage>{error}</ErrorMessage>}
+          {success && <SuccessMessage>Account created!</SuccessMessage>}
          
       </Modal>
     </ModalBackdrop>

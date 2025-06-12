@@ -445,10 +445,7 @@ const handleUpdateInvoice = (invoice) => {
               <RoundedButton width="75px" hoverBackgroundColor="orange" onClick={() => navigate('recurring-invoices/update/:id')}>Update</RoundedButton>  
               <RoundedButton width="75px" hoverBackgroundColor="red" onClick={() => navigate('recurring-invoices/delete/:id')}>Delete</RoundedButton>
  
-              <RoundedButton width="82px" hoverBackgroundColor="#53B87D" onClick={() => navigate('accounts')}>Acounts</RoundedButton>
-              <RoundedButton width="55px" hoverBackgroundColor="#53B87D" onClick={() => navigate('accounts/create')}>New</RoundedButton> 
-              <RoundedButton width="75px" hoverBackgroundColor="orange" onClick={() => navigate('accounts/update/:id')}>Update</RoundedButton>
-              <RoundedButton width="75px" hoverBackgroundColor="red" onClick={() => navigate('accounts/delete/:id')}>Delete</RoundedButton> 
+              <RoundedButton width="93px" hoverBackgroundColor="#53B87D" onClick={() => navigate('accounts')}>Accounts</RoundedButton> 
             </Payments>  
 
             <Payments>  
