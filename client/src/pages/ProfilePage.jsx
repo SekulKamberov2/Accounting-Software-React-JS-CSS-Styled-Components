@@ -449,10 +449,7 @@ const handleUpdateInvoice = (invoice) => {
             </Payments>  
 
             <Payments>  
-              <RoundedButton width="67px" hoverBackgroundColor="#888DBF" onClick={() => navigate('taxes')}>Taxes</RoundedButton>
-              <RoundedButton width="53px" hoverBackgroundColor="#888DBF" onClick={() => navigate('taxes/create')}>New</RoundedButton>
-              <RoundedButton width="75px" hoverBackgroundColor="orange" onClick={() => navigate('taxes/update/:id')}>Update</RoundedButton> 
-              <RoundedButton width="75px" hoverBackgroundColor="red" onClick={() => navigate('taxes/delete/:id')}>Delete</RoundedButton> 
+              <RoundedButton width="67px" hoverBackgroundColor="#888DBF" onClick={() => navigate('taxes')}>Taxes</RoundedButton> 
 
               <RoundedButton width="116px" hoverBackgroundColor="#1AA17F" onClick={() => navigate('bank-transactions')}>Bank Trans.</RoundedButton>
               <RoundedButton width="55px" hoverBackgroundColor="#1AA17F" onClick={() => navigate('bank-transactions/create')}>New</RoundedButton> 

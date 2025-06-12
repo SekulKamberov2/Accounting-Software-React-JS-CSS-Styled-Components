@@ -15,10 +15,7 @@ import CreateAccount from './pages/Accounts/CreateAccount.jsx';
 import UpdateAccount from './pages/Accounts/UpdateAccount.jsx';
 import DeleteAccount from './pages/Accounts/DeleteAccount.jsx';
 
-import AllTaxes from './pages/Taxes/AllTaxes.jsx';
-import CreateTax from './pages/Taxes/CreateTax.jsx';
-import DeleteTax from './pages/Taxes/DeleteTax.jsx';
-import UpdateTax from './pages/Taxes/UpdateTax.jsx';
+import Taxes from './pages/Taxes/Taxes.jsx'; 
 
 import AllBankTransactions from './pages/BankTransactions/AllBankTransactions.jsx';
 import CreateBankTransaction from './pages/BankTransactions/CreateBankTransaction.jsx';
@@ -96,10 +93,7 @@ function App() {
             <Route path="bank-transactions/update/:id" element={<UpdateBankTransaction />} />
             <Route path="bank-transactions/delete/:id" element={<DeleteBankTransaction />} />
 
-            <Route path="taxes" element={<AllTaxes />} />
-            <Route path="taxes/create" element={<CreateTax />} />
-            <Route path="taxes/update/:id" element={<UpdateTax />} />
-            <Route path="taxes/delete/:id" element={<DeleteTax />} />
+            <Route path="taxes" element={<Taxes />} /> 
 
             <Route path="recurring-invoices" element={<AllRecurringInvoices />} />
             <Route path="recurring-invoices/create" element={<CreateRecurringInvoice />} />
