@@ -79,6 +79,7 @@ const PageContainer = styled.div`
     flex-direction: row;  
     box-sizing: border-box; 
      margin-top: 10px; 
+      gap: 5px;
   `; 
 
   const Payments = styled.div`
@@ -441,37 +442,17 @@ const handleUpdateInvoice = (invoice) => {
             </Invoices>
              <Payments>
               <RoundedButton width="175px" hoverBackgroundColor="#A4CCF5" onClick={() => navigate('recurring-invoices')}>Recurring Invoices</RoundedButton>
-              <RoundedButton width="53px" hoverBackgroundColor="#A4CCF5" onClick={() => navigate('recurring-invoices/create"')}>New</RoundedButton> 
-              <RoundedButton width="75px" hoverBackgroundColor="orange" onClick={() => navigate('recurring-invoices/update/:id')}>Update</RoundedButton>  
-              <RoundedButton width="75px" hoverBackgroundColor="red" onClick={() => navigate('recurring-invoices/delete/:id')}>Delete</RoundedButton>
- 
               <RoundedButton width="93px" hoverBackgroundColor="#53B87D" onClick={() => navigate('accounts')}>Accounts</RoundedButton> 
-            </Payments>  
-
-            <Payments>  
               <RoundedButton width="67px" hoverBackgroundColor="#888DBF" onClick={() => navigate('taxes')}>Taxes</RoundedButton> 
-
-              <RoundedButton width="116px" hoverBackgroundColor="#1AA17F" onClick={() => navigate('bank-transactions')}>Bank Trans.</RoundedButton>
-              <RoundedButton width="55px" hoverBackgroundColor="#1AA17F" onClick={() => navigate('bank-transactions/create')}>New</RoundedButton> 
-              <RoundedButton width="75px" hoverBackgroundColor="orange" onClick={() => navigate('bank-transactions/update/:id')}>Update</RoundedButton>
-              <RoundedButton width="75px" hoverBackgroundColor="red" onClick={() => navigate('bank-transactions/delete/:id')}>Delete</RoundedButton> 
- 
-              <RoundedButton width="82px" hoverBackgroundColor="#C09BC2" onClick={() => navigate('journal-entries')}>Journal</RoundedButton>
-              <RoundedButton width="53px" hoverBackgroundColor="#C09BC2" onClick={() => navigate('journal-entries/create')}>New</RoundedButton> 
-              <RoundedButton width="75px" hoverBackgroundColor="orange" onClick={() => navigate('journal-entries/update/:id')}>Update</RoundedButton>
-              <RoundedButton width="75px" hoverBackgroundColor="red" onClick={() => navigate('journal-entries/delete/:id')}>Delete</RoundedButton> 
-            </Payments> 
-            <Payments> 
-    
-              <RoundedButton width="97px" hoverBackgroundColor="#F78745" onClick={() => navigate('payments')}>Payments</RoundedButton>
-              <RoundedButton width="53px" hoverBackgroundColor="#F78745" onClick={() => navigate('payments/create')}>New</RoundedButton>
-              <RoundedButton width="75px" hoverBackgroundColor="orange" onClick={() => navigate('payments/update/:id')}>Update</RoundedButton> 
-              <RoundedButton width="75px" hoverBackgroundColor="red" onClick={() => navigate('payments/delete/:id')}>Delete</RoundedButton> 
-              <RoundedButton width="85px" hoverBackgroundColor="#98CAD4" onClick={() => navigate('vendors')}>Vendors</RoundedButton>
-              <RoundedButton width="55px" hoverBackgroundColor="#98CAD4" onClick={() => navigate('vendors/create')}>New</RoundedButton> 
-              <RoundedButton width="75px" hoverBackgroundColor="orange" onClick={() => navigate('vendors/update/:id')}>Update</RoundedButton>
-              <RoundedButton width="75px" hoverBackgroundColor="red" onClick={() => navigate('vendors/delete/:id')}>Delete</RoundedButton> 
             </Payments>  
+
+            <Payments>   
+              <RoundedButton width="116px" hoverBackgroundColor="#1AA17F" onClick={() => navigate('bank-transactions')}>Bank Trans.</RoundedButton> 
+              <RoundedButton width="82px" hoverBackgroundColor="#C09BC2" onClick={() => navigate('journal-entries')}>Journal</RoundedButton> 
+              <RoundedButton width="97px" hoverBackgroundColor="#F78745" onClick={() => navigate('payments')}>Payments</RoundedButton> 
+              <RoundedButton width="85px" hoverBackgroundColor="#98CAD4" onClick={() => navigate('vendors')}>Vendors</RoundedButton> 
+            </Payments> 
+   
             </>        
           }
           {error && <ErrorMessage>{error}</ErrorMessage>}

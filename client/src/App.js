@@ -22,7 +22,7 @@ import CreateBankTransaction from './pages/BankTransactions/CreateBankTransactio
 import DeleteBankTransaction from './pages/BankTransactions/DeleteBankTransaction.jsx';
 import UpdateBankTransaction from './pages/BankTransactions/UpdateBankTransaction.jsx';
  
-import AllJournalEntries from './pages/JournalEntries/AllJournalEntries.jsx';
+import JournalEntry from './pages/JournalEntries/JournalEntry.jsx';
 import CreateJournalEntry from './pages/JournalEntries/CreateJournalEntry.jsx';
 import UpdateJournalEntry from './pages/JournalEntries/UpdateJournalEntry.jsx';
 import DeleteJournalEntry from './pages/JournalEntries/DeleteJournalEntry.jsx';
@@ -70,10 +70,7 @@ function App() {
             <Route path="accounts/update/:id" element={<UpdateAccount />} />
             <Route path="accounts/delete/:id" element={<DeleteAccount />} />
 
-            <Route path="journal-entries" element={<AllJournalEntries />} />
-            <Route path="journal-entries/create" element={<CreateJournalEntry />} />
-            <Route path="journal-entries/update/:id" element={<UpdateJournalEntry />} />
-            <Route path="journal-entries/delete/:id" element={<DeleteJournalEntry />} />
+            <Route path="journal-entries" element={<JournalEntry />} /> 
 
             <Route path="expenses" element={<AllExpenses />} />
             <Route path="expenses/create" element={<CreateExpense />} />
