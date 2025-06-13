@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 const Container = styled.div`
   padding: 2rem;
-  max-width: 1000px;
+  max-width: 800px;
   margin: auto;
 `;
 
@@ -95,8 +95,7 @@ const TR = styled.tr`
     background-color: #e0f7f1;  
   }
 `;
-
-
+ 
 const BankTransactions = () => {
   const [transactions, setTransactions] = useState([]);
   const [filters, setFilters] = useState({
@@ -145,8 +144,7 @@ const fetchTransactions = async () => {
     setError(error);
   }
 };
-
-
+ 
   const handleFilterChange = e => {
     const { name, value } = e.target;
     setFilters(prev => ({ ...prev, [name]: value }));
@@ -176,7 +174,7 @@ const fetchTransactions = async () => {
   return (
     <Container>
       <Section>
-        <Title>Filters</Title>
+        <Title>Search by:</Title>
         <Form>
           <Label>
             Account ID:
