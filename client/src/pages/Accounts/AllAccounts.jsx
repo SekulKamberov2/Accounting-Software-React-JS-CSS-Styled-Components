@@ -12,6 +12,12 @@ const Container = styled.div`
   box-sizing: border-box;
 `;
 
+const TR = styled.tr`
+  &:hover {
+    background-color: #53B87D;
+  }
+`;
+
 const RoundedButton = styled.button`
   padding: 5px 8px;
   background-color: ${({ backgroundColor }) => backgroundColor || 'transparent'};
@@ -198,7 +204,7 @@ const AllAccounts = () => {
       await fetchAccounts();
       setUpdateAccount(null);
     } catch (err) {
-      alert(err.message);
+      seetError(err.message);
     }
   };
 
@@ -211,7 +217,7 @@ const AllAccounts = () => {
       await fetchAccounts();
       setDeleteAccount(null);
     } catch (err) {
-      alert(err.message);
+      setError(err.message);
     }
   };
 
@@ -228,7 +234,7 @@ const AllAccounts = () => {
       setNewAccountModal(false);
       setFormData({ Name: '', Type: '', Code: '' });
     } catch (err) {
-      alert(err.message);
+      setError(err.message);
     }
   };
 
@@ -317,7 +323,7 @@ const AllAccounts = () => {
           </thead>
           <tbody>
             {filteredAccounts.map(account => (
-              <tr key={account.Id}>
+              <TR key={account.Id}>
                 <Td>{account.Id}</Td>
                 <Td>{account.Name}</Td>
                 <Td>{account.Type}</Td>
@@ -336,7 +342,7 @@ const AllAccounts = () => {
                     </RoundedButton>
                 </ActionsButtonRow>
                 </Td>
-              </tr>
+              </TR>
             ))}
           </tbody>
         </Table>

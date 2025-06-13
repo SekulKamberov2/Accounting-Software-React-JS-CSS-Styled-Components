@@ -23,18 +23,7 @@ const NavbarLeft = styled.div`
   display: flex;
   width: 100%;
 `;
-
-const NavItem = styled(NavLink)`
-  display: block;
-  color: white;
-  margin: 0 15px;
-  text-decoration: none;
-
-  &:hover {
-    text-decoration: underline;
-  }
-`;
-
+  
 const MainContent = styled.div`
   display: flex;
   flex-direction: column;
@@ -105,9 +94,8 @@ const UserLayout = () => {
             <NavbarRight>
                 {user.roles &&  
                 <> 
-                    {ACCOUNTANT && 
-                    <>
- 
+                    {ACCOUNTANT && !user &&
+                    <> 
                         <RoundedButton width="80px" onClick={() => window.location.href = '/signup'}>SignUp</RoundedButton>
                     </>
                    }
@@ -121,8 +109,8 @@ const UserLayout = () => {
                     } 
                 </>
                 }        
-                <RoundedButton as="button" onClick={() => navigate('/profile')}>Profile</RoundedButton>
-                <RoundedButton as="button" onClick={() => handleLogout()}>Logout</RoundedButton>
+                <RoundedButton onClick={() => navigate('/profile')}>Profile</RoundedButton>
+                <RoundedButton onClick={() => handleLogout()}>Logout</RoundedButton>
             </NavbarRight>
         </Navbar> 
 

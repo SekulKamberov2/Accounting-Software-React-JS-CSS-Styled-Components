@@ -189,7 +189,7 @@ const Payments = () => {
       });
 
       const result = await res.json();
-      if (!res.ok) throw new Error(result.message || 'Failed to save payment');
+      if (!res.ok) setError(result.message || 'Failed to save payment');
 
       setSuccess(editPayment ? 'Payment updated successfully' : 'Payment recorded successfully');
       setFormData({ invoice_id: '', amount: '', date: '', method: 'cash' });
@@ -197,7 +197,7 @@ const Payments = () => {
       setIsModalOpen(false);
       fetchPayments();
     } catch (err) {
-      setError(err.message);
+        setError(err.message);
     }
   };
 
@@ -207,7 +207,7 @@ const Payments = () => {
         method: 'DELETE'
       });
 
-      if (!res.ok) throw new Error('Failed to delete payment');
+      if (!res.ok) setError('Failed to delete payment');
 
       setSuccess('Payment deleted successfully');
       setDeletePayment(null);

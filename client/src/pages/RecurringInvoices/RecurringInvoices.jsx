@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
  
 const Container = styled.div`
@@ -10,7 +10,8 @@ const Container = styled.div`
   margin: 40px auto;
   padding: 20px;
   box-sizing: border-box;
-`;
+`; 
+
 const RoundedButton = styled.button`
   padding: 5px 8px;
   background-color: ${({ backgroundColor }) => backgroundColor || 'transparent'};
@@ -29,11 +30,19 @@ const RoundedButton = styled.button`
     border-color: black; 
   }
 `;
-const Title = styled.h2`
+
+const Title = styled.h2`  
   font-size: 26px;
   font-weight: bold;
   margin-bottom: 20px;
 `;
+
+const TR = styled.tr`
+  &:hover {
+    background-color: #A4CCF5;
+  }
+`;
+
 const TitleRow = styled.div`
   display: flex;
   align-items: center;
@@ -41,6 +50,7 @@ const TitleRow = styled.div`
   width: 80%;
   margin-bottom: 20px;
 `;
+
 const SearchInput = styled.input`
   padding: 10px;
   width: 77%;
@@ -68,6 +78,7 @@ const NoResults = styled.div`
   margin-top: 20px;
   color: #999;
   text-align: center;
+  width: 100%;
 `;
 const ModalBackdrop = styled.div`
   position: fixed;
@@ -109,29 +120,7 @@ const ModalButtonRow = styled.div`
   justify-content: flex-end;
   gap: 10px;
   margin-top: 20px;
-`;
-const ActionsButtonRow = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-top: 20px; 
-`;
-const ModalButton = styled.button`
-  padding: 8px 16px;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
-  font-weight: 600;
-  color: white;
-  background-color: ${({ variant }) =>
-    variant === 'cancel' ? '#777' :
-    variant === 'delete' ? '#E74C3C' :
-    '#27AE60'};
-
-  &:hover {
-    opacity: 0.85;
-  }
-`;
+`; 
 
 const RecurringInvoices = () => { 
   const [invoices, setInvoices] = useState([]);
@@ -404,7 +393,7 @@ const RecurringInvoices = () => {
             </thead>
             <tbody>
               {filteredInvoices.map(inv => (
-                <tr key={inv.id}>
+                <TR key={inv.id}>
                   <Td>{inv.id}</Td>
                   <Td>{inv.customerId}</Td>
                   <Td>{inv.interval}</Td>
@@ -441,7 +430,7 @@ const RecurringInvoices = () => {
                       Delete
                     </RoundedButton>
                   </Td>
-                </tr>
+                </TR>
               ))}
             </tbody> 
           </Table>

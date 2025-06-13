@@ -20,11 +20,13 @@ display: flex;
 `;
 
 const SuccessMessage = styled.div`
-display: flex;
+  display: flex;
   justify-content: center;
   color: green;
   margin-top: 10px;
-  font-weight: bold;
+  font-weight: 700;
+  font-size: 35px;
+  padding-bottom: 10px
 `;
 
 const RoundedButton = styled.button`
@@ -91,6 +93,7 @@ const NoResults = styled.div`
   margin-top: 20px;
   color: #999;
   text-align: center;
+  width: 100%;
 `;
 
 const ModalBackdrop = styled.div`
@@ -170,8 +173,7 @@ const Taxes = () => {
   const [updateTaxItem, setUpdateTaxItem] = useState(null);
   const [deleteTaxItem, setDeleteTaxItem] = useState(null);
   const [newTaxModal, setNewTaxModal] = useState(false);
-  const [formData, setFormData] = useState({ name: '', rate: '' });
-  const [success, setSuccess] = useState(false);
+  const [formData, setFormData] = useState({ name: '', rate: '' }); 
 
   useEffect(() => {
     (async () => {
@@ -203,7 +205,7 @@ const Taxes = () => {
         body: JSON.stringify(data),
       });
       if (!response.ok) throw new Error('Update failed');
-      setSuccess(true);
+     
       await refreshData();
       setUpdateTaxItem(null);
     } catch (err) {
@@ -217,7 +219,7 @@ const Taxes = () => {
         method: 'DELETE',
       });
       if (!response.ok) throw new Error('Delete failed');
-      setSuccess(true);
+      
       await refreshData();
       setDeleteTaxItem(null);
     } catch (err) {
@@ -234,7 +236,7 @@ const Taxes = () => {
         body: JSON.stringify(formData),
       });
       if (!response.ok) throw new Error('Create failed');
-      setSuccess(true);
+      
       await refreshData();
       setNewTaxModal(false);
       setFormData({ name: '', rate: '' });
@@ -325,18 +327,20 @@ const Taxes = () => {
     <Container>
       <TitleRow>
         <Title>All Taxes</Title>
+
+          {error && <ErrorMessage>{error}</ErrorMessage>}   
+
         <RoundedButton width="101px" fontWeight="600" hoverBackgroundColor="#888DBF"
           onClick={() => {
             setFormData({ name: '', rate: '' });
             setNewTaxModal(true);
-            setError("");
-            setSuccess(false);
+            setError(""); 
           }}
         >
           New Tax
         </RoundedButton>
       </TitleRow>
-
+   
       <SearchInput type="text" placeholder="Search by name or rate..."
         value={filter} onChange={e => setFilter(e.target.value)}
       />
@@ -365,8 +369,7 @@ const Taxes = () => {
                       onClick={() => {
                         setFormData({ name: tax.Name, rate: tax.Rate });
                         setUpdateTaxItem(tax);
-                        setError("");
-                        setSuccess(false);
+                        setError(""); 
                       }}
                     >
                       Update
@@ -376,8 +379,7 @@ const Taxes = () => {
                       hoverBackgroundColor="#E74C3C"
                       onClick={() => {
                         setDeleteTaxItem(tax);
-                        setError("");
-                        setSuccess(false);
+                        setError(""); 
                       }}
                     >
                       Delete
@@ -395,9 +397,7 @@ const Taxes = () => {
       {deleteTaxItem && renderDeleteModal(deleteTaxItem)}
       {newTaxModal && renderModal({}, true)} 
  
-    </Container> 
-      {error && <ErrorMessage>{error}</ErrorMessage>}
-      {success && <SuccessMessage>Successful</SuccessMessage>}
+    </Container>  
     </>
   );
 };

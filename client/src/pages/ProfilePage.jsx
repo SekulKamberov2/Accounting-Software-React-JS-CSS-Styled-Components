@@ -3,7 +3,7 @@ import { Outlet, useNavigate } from 'react-router-dom';
  
 import styled from 'styled-components'; 
 
-import {InvoiceViewer} from '../components/InvoiceViewer'
+import InvoiceViewer from '../pages/InvoiceViewer.jsx'
 import { useSelector } from 'react-redux';
 
 const UserCard = styled.div`
@@ -253,7 +253,7 @@ const ProfilePage = () => {
       { description: '', quantity: '', unit_price: '' }
     ],
   });
-
+/*
 const handleUpdateInvoice = (invoice) => {
  
   setModalOpen(false);
@@ -275,7 +275,8 @@ const handleUpdateInvoice = (invoice) => {
   setIsUpdating(true);
   setCreateModalOpen(true);
 };
-  
+  */
+ /*
   const handleInvoiceChange = (e) => {
     const { name, value } = e.target;
     setNewInvoice(prev => ({ ...prev, [name]: value }));
@@ -303,7 +304,7 @@ const handleUpdateInvoice = (invoice) => {
       items: prev.items.filter((_, i) => i !== index)
     }));
   };
-
+ 
   const handleSubmit = async (e) => {
   e.preventDefault();
 
@@ -339,7 +340,7 @@ const handleUpdateInvoice = (invoice) => {
     setError(err.message || 'An unexpected error occurred');
   }
 };
-
+*/
   const handleDeleteInvoice = async (invoiceId) => {
     if (!window.confirm('Are you sure you want to delete this invoice?')) return;
 
@@ -355,11 +356,9 @@ const handleUpdateInvoice = (invoice) => {
       setInvoices(prev =>
         prev.filter(invoice => invoice.Id !== invoiceId)
       );
-
-      alert('Invoice deleted successfully');
+ 
     } catch (error) {
-      console.error('Error deleting invoice:', error);
-      alert(`Error: ${error.message}`);
+      console.error('Error deleting invoice:', error); 
     }
   };
 
@@ -423,40 +422,27 @@ const handleUpdateInvoice = (invoice) => {
              
           </UserCard> 
           {user.roles == 'accountant' && 
-          <> 
-            <Invoices> 
-              {(ACCOUNTANT || ADMIN) &&
-                <RoundedButton width="91px" hoverBackgroundColor="#A4CCF5" 
-                  onClick={() => handleShowInvoices()}>Invoices</RoundedButton>
-              }
-
-              {ACCOUNTANT && 
-                <RoundedButton width="59px" hoverBackgroundColor="#A4CCF5" 
-                 onClick={() => setCreateModalOpen(true)}>New</RoundedButton>
-              }
-     
-              {ACCOUNTANT &&  
-                <RoundedButton width="55px" hoverBackgroundColor="#A4CCF5" 
-                  onClick={() => openModal()}>Find</RoundedButton>    
-              } 
-            </Invoices>
+          <>  
              <Payments>
+                  {(ACCOUNTANT || ADMIN) &&
+                <RoundedButton width="91px" hoverBackgroundColor="#A4CCF5" 
+                  onClick={() => navigate('invoices-page')}>Invoices</RoundedButton>
+              } 
               <RoundedButton width="175px" hoverBackgroundColor="#A4CCF5" onClick={() => navigate('recurring-invoices')}>Recurring Invoices</RoundedButton>
               <RoundedButton width="93px" hoverBackgroundColor="#53B87D" onClick={() => navigate('accounts')}>Accounts</RoundedButton> 
-              <RoundedButton width="67px" hoverBackgroundColor="#888DBF" onClick={() => navigate('taxes')}>Taxes</RoundedButton> 
-            </Payments>  
+             </Payments>  
 
-            <Payments>   
+            <Payments> 
+              <RoundedButton width="67px" hoverBackgroundColor="#888DBF" onClick={() => navigate('taxes')}>Taxes</RoundedButton> 
               <RoundedButton width="116px" hoverBackgroundColor="#1AA17F" onClick={() => navigate('bank-transactions')}>Bank Trans.</RoundedButton> 
               <RoundedButton width="82px" hoverBackgroundColor="#C09BC2" onClick={() => navigate('journal-entries')}>Journal</RoundedButton> 
               <RoundedButton width="97px" hoverBackgroundColor="#F78745" onClick={() => navigate('payments')}>Payments</RoundedButton> 
               <RoundedButton width="85px" hoverBackgroundColor="#98CAD4" onClick={() => navigate('vendors')}>Vendors</RoundedButton> 
-            </Payments> 
-   
+            </Payments>  
             </>        
           }
           {error && <ErrorMessage>{error}</ErrorMessage>}
-  
+ {/*
           <InvoiceViewer
             isOpen={modalOpen}
             onClose={() => setModalOpen(false)}
@@ -466,8 +452,8 @@ const handleUpdateInvoice = (invoice) => {
             handleDeleteInvoice={handleDeleteInvoice}
             handleUpdateInvoice={handleUpdateInvoice}
           />
-
-           {createModalOpen && (
+ */}
+       {/*     {createModalOpen && (
             <ModalBackdrop width="100%" onClick={() => setCreateModalOpen(false)}>
               <Modal onClick={e => e.stopPropagation()}>
                 <h2>{isUpdating ? 'Update Invoice' : 'Create New Invoice'}</h2>
@@ -495,37 +481,22 @@ const handleUpdateInvoice = (invoice) => {
                     <div key={index} style={{ marginBottom: 15, borderBottom: '2px solid #eee', paddingBottom: 10 }}>
                       <FormRow style={{ width: '97%'}}>
                         <Label>Description</Label>
-                        <Textarea
-                          name="description"
-                          rows="3"
-                          value={item.description}
-                          onChange={(e) => handleItemChange(index, e)}
-                          required
-                          style={{ width: '100%' }}
+                        <Textarea name="description" rows="3" value={item.description} required style={{ width: '100%' }}
+                          onChange={(e) => handleItemChange(index, e)} 
                         />
                       </FormRow>
                       <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
                         <FormRow style={{ flex: '1 1 150px', minWidth: '150px' }}>
                           <Label>Quantity</Label>
-                          <Input
-                            name="quantity"
-                            type="number"
-                            min="1"
-                            value={item.quantity}
+                          <Input name="quantity" type="number" min="1" value={item.quantity}
                             onChange={(e) => handleItemChange(index, e)}
                             required
                           />
                         </FormRow>
                         <FormRow style={{ flex: '1 1 150px', minWidth: '150px' }}>
                           <Label>Unit Price</Label>
-                          <Input
-                            name="unit_price"
-                            type="number"
-                            step="0.01"
-                            min="0"
-                            value={item.unit_price}
-                            onChange={(e) => handleItemChange(index, e)}
-                            required
+                          <Input name="unit_price" type="number" step="0.01" min="0" value={item.unit_price}  required
+                            onChange={(e) => handleItemChange(index, e)} 
                           />
                         </FormRow>
                       </div>
@@ -540,13 +511,13 @@ const handleUpdateInvoice = (invoice) => {
                   <SmallButton type="button" onClick={addItem}>+ Add Item</SmallButton>
 
                   <ButtonRow style={{ justifyContent: 'space-between', marginTop: '25px' }}>
-                    <Button type="submit">{isUpdating ? 'Update Invoice' : 'Create Invoice'}</Button>
-                    <Button type="button" onClick={() => setCreateModalOpen(false)}>Cancel</Button>
+                   <RoundedButton hoverBackgroundColor="orange" color="black" type="submit">{isUpdating ? 'Update Invoice' : 'Create Invoice'}</RoundedButton>
+                  <RoundedButton hoverBackgroundColor="#A4CCF5" color="black" onClick={() => setCreateModalOpen(false)}>Cancel</RoundedButton>
                   </ButtonRow>
                 </form> 
               </Modal>
             </ModalBackdrop>
-          )}
+          )}   */}
 
          
           {isModalOpen && 
@@ -561,7 +532,7 @@ const handleUpdateInvoice = (invoice) => {
             </ModalContent>   
           </ModalBackdrop>  
           }
-          {isModalOpen && invoiceData && (
+    {/*      {isModalOpen && invoiceData && (
             <InvoiceViewer
               isOpen={isModalOpen}
               onClose={closeModal}
@@ -574,7 +545,7 @@ const handleUpdateInvoice = (invoice) => {
                 handleUpdateInvoice(inv);  
           }}
         />
-      )} 
+      )} */}
             <MainContent>
           <Outlet />  
       </MainContent>
