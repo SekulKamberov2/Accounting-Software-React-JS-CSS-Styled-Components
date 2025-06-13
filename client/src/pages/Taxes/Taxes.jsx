@@ -76,10 +76,10 @@ const Table = styled.table`
 const Th = styled.th`
   text-align: left;
   padding-left: 9px;
-  background-color: #53B87D;
+  background-color: #888DBF;
   height: 10px;
   border-bottom: 2px solid #ddd;
-  color: white;  
+  color: black;  
 `;
 
 const Td = styled.td`
@@ -288,10 +288,10 @@ const Taxes = () => {
             />
           </FormRow>
           <ModalButtonRow> 
-            <RoundedButton width="81px" fontWeight="600" hoverBackgroundColor="#53B87D" type="submit">
+            <RoundedButton width="81px" fontWeight="600" hoverBackgroundColor="orange" type="submit">
               Save
             </RoundedButton>
-            <RoundedButton width="81px" fontWeight="600" hoverBackgroundColor="#53B87D" 
+            <RoundedButton width="81px" fontWeight="600" hoverBackgroundColor="#888DBF" 
               onClick={() => isNew ? setNewTaxModal(false) : setUpdateTaxItem(null)}
               type="button"
             >
@@ -312,7 +312,7 @@ const Taxes = () => {
           <RoundedButton width="81px" fontWeight="600" hoverBackgroundColor="red" onClick={() => handleDelete(tax.Id)}>
             Delete
           </RoundedButton>
-          <RoundedButton width="81px" fontWeight="600" hoverBackgroundColor="#53B87D" onClick={() => setDeleteTaxItem(null)}>
+          <RoundedButton width="81px" fontWeight="600" hoverBackgroundColor="#888DBF" onClick={() => setDeleteTaxItem(null)}>
             Cancel
           </RoundedButton> 
         </ModalButtonRow> 
@@ -325,7 +325,7 @@ const Taxes = () => {
     <Container>
       <TitleRow>
         <Title>All Taxes</Title>
-        <RoundedButton width="101px" fontWeight="600" hoverBackgroundColor="#53B87D"
+        <RoundedButton width="101px" fontWeight="600" hoverBackgroundColor="#888DBF"
           onClick={() => {
             setFormData({ name: '', rate: '' });
             setNewTaxModal(true);
@@ -361,7 +361,7 @@ const Taxes = () => {
                 <Td>{tax.Rate}</Td>
                 <Td>
                   <ActionsButtonRow>
-                    <RoundedButton width="75px" hoverBackgroundColor="#53B87D"
+                    <RoundedButton width="75px" hoverBackgroundColor="orange"
                       onClick={() => {
                         setFormData({ name: tax.Name, rate: tax.Rate });
                         setUpdateTaxItem(tax);

@@ -5,44 +5,23 @@ import UserLayout from './components/UserLayout';
 import ProfilePage from './pages/ProfilePage'; 
 import AllUsers from './pages/AllUsers'; 
 
-import AllPayments from './pages/Payments/AllPayments.jsx';
-import CreatePayment from './pages/Payments/CreatePayment.jsx';
-import UpdatePayment from './pages/Payments/UpdatePayment.jsx';
-import DeletePayment from './pages/Payments/DeletePayment.jsx';
+import Payments from './pages/Payments/Payments.jsx'; 
 
-import AllAccounts from './pages/Accounts/AllAccounts.jsx';
-import CreateAccount from './pages/Accounts/CreateAccount.jsx';
-import UpdateAccount from './pages/Accounts/UpdateAccount.jsx';
-import DeleteAccount from './pages/Accounts/DeleteAccount.jsx';
+import AllAccounts from './pages/Accounts/AllAccounts.jsx'; 
 
 import Taxes from './pages/Taxes/Taxes.jsx'; 
 
-import AllBankTransactions from './pages/BankTransactions/AllBankTransactions.jsx';
-import CreateBankTransaction from './pages/BankTransactions/CreateBankTransaction.jsx';
-import DeleteBankTransaction from './pages/BankTransactions/DeleteBankTransaction.jsx';
-import UpdateBankTransaction from './pages/BankTransactions/UpdateBankTransaction.jsx';
+import BankTransactions from './pages/BankTransactions/BankTransactions.jsx'; 
  
-import JournalEntry from './pages/JournalEntries/JournalEntry.jsx';
-import CreateJournalEntry from './pages/JournalEntries/CreateJournalEntry.jsx';
-import UpdateJournalEntry from './pages/JournalEntries/UpdateJournalEntry.jsx';
-import DeleteJournalEntry from './pages/JournalEntries/DeleteJournalEntry.jsx';
+import JournalEntry from './pages/JournalEntries/JournalEntry.jsx'; 
   
-import AllExpenses from './pages/Expenses/AllExpenses.jsx';
-import CreateExpense from './pages/Expenses/CreateExpense.jsx';
-import DeleteExpense from './pages/Expenses/DeleteExpense.jsx';
-import ExpensesByDateRange from './pages/Expenses/ExpensesByDateRange.jsx';
-import UpdateExpense from './pages/Expenses/DeleteExpense.jsx'; 
+import AllExpenses from './pages/Expenses/AllExpenses.jsx'; 
+import ExpensesByDateRange from './pages/Expenses/ExpensesByDateRange.jsx'; 
 import ProfitLossReport from './pages/ProfitLoss/ProfitLossReport.jsx'; 
  
-import AllRecurringInvoices from './pages/RecurringInvoices/AllRecurringInvoices.jsx';
-import CreateRecurringInvoice from './pages/RecurringInvoices/CreateRecurringInvoice.jsx';
-import DeleteRecurringInvoice from './pages/RecurringInvoices/DeleteRecurringInvoice.jsx'; 
-import UpdateRecurringInvoice from './pages/RecurringInvoices/UpdateRecurringInvoice.jsx'; 
+import RecurringInvoices from './pages/RecurringInvoices/RecurringInvoices.jsx'; 
  
-import AllVendors from './pages/Vendors/AllVendors.jsx';
-import CreateVendor from './pages/Vendors/CreateVendor.jsx'; 
-import UpdateVendor from './pages/Vendors/UpdateVendor.jsx'; 
-import DeleteVendor from './pages/Vendors/DeleteVendor'; 
+import AllVendors from './pages/Vendors/AllVendors.jsx'; 
 
 import './App.css';
 
@@ -60,42 +39,24 @@ function App() {
           {/* My Profile and Nested Routes */}
           <Route path="/profile" element={<ProfilePage />}> 
             
-            <Route path="payments" element={<AllPayments />} />
-            <Route path="payments/create" element={<CreatePayment />} />
-            <Route path="payments/update/:id" element={<UpdatePayment />} />
-            <Route path="payments/delete/:id" element={<DeletePayment />} />
+            <Route path="payments" element={<Payments />} /> 
 
-            <Route path="accounts" element={<AllAccounts />} />
-            <Route path="accounts/create" element={<CreateAccount />} />
-            <Route path="accounts/update/:id" element={<UpdateAccount />} />
-            <Route path="accounts/delete/:id" element={<DeleteAccount />} />
+            <Route path="accounts" element={<AllAccounts />} /> 
 
             <Route path="journal-entries" element={<JournalEntry />} /> 
 
-            <Route path="expenses" element={<AllExpenses />} />
-            <Route path="expenses/create" element={<CreateExpense />} />
-            <Route path="expenses/update/:id" element={<UpdateExpense />} />
-            <Route path="expenses/delete/:id" element={<DeleteExpense />} />
+            <Route path="expenses" element={<AllExpenses />} /> 
             <Route path="expenses/date-range" element={<ExpensesByDateRange />} />
 
             <Route path="reports/profit-loss" element={<ProfitLossReport />} />
 
-            <Route path="vendors" element={<AllVendors />} />
-            <Route path="vendors/create" element={<CreateVendor />} />
-            <Route path="vendors/update/:id" element={<UpdateVendor />} />
-            <Route path="vendors/delete/:id" element={<DeleteVendor />} />
+            <Route path="vendors" element={<AllVendors />} /> 
 
-            <Route path="bank-transactions" element={<AllBankTransactions />} />
-            <Route path="bank-transactions/create" element={<CreateBankTransaction />} />
-            <Route path="bank-transactions/update/:id" element={<UpdateBankTransaction />} />
-            <Route path="bank-transactions/delete/:id" element={<DeleteBankTransaction />} />
+            <Route path="bank-transactions" element={<BankTransactions />} /> 
 
             <Route path="taxes" element={<Taxes />} /> 
 
-            <Route path="recurring-invoices" element={<AllRecurringInvoices />} />
-            <Route path="recurring-invoices/create" element={<CreateRecurringInvoice />} />
-            <Route path="recurring-invoices/update/:id" element={<UpdateRecurringInvoice />} />
-            <Route path="recurring-invoices/delete/:id" element={<DeleteRecurringInvoice />} />
+            <Route path="recurring-invoices" element={<RecurringInvoices />} /> 
 
           </Route>
 

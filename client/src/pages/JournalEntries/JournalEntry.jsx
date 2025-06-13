@@ -56,30 +56,30 @@ const TitleRow = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 80%;
+  width: 90%;
   margin-bottom: 20px;
 `;
 
 const SearchInput = styled.input`
   padding: 10px;
-  width: 78%;
+  width: 88%;
   margin-bottom: 20px;
   border-radius: 6px;
   border: 1px solid #ccc;
 `;
 
 const Table = styled.table`
-  width: 80%;
+  width: 90%;
   border-collapse: collapse;
 `;
 
 const Th = styled.th`
   text-align: left;
   padding-left: 9px;
-  background-color: #53b87d;
+  background-color: #C09BC2;
   height: 10px;
   border-bottom: 2px solid #ddd;
-  color: white;
+  color: block;
 `;
 
 const Td = styled.td`
@@ -138,28 +138,19 @@ const ModalButtonRow = styled.div`
   margin-top: 20px;
 `;
 
-const ModalButton = styled.button`
-  padding: 8px 16px;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
-  font-weight: 600;
-  color: white;
-  background-color: ${({ variant }) =>
-    variant === 'cancel' ? '#777' :
-    variant === 'delete' ? '#e74c3c' :
-    '#27ae60'};
-
-  &:hover {
-    opacity: 0.85;
-  }
-`;
+ 
 
 const ActionsButtonRow = styled.div`
   display: flex;
   justify-content: flex-end;
   gap: 10px;
   margin-top: 20px;
+`;
+
+const TR = styled.tr`
+  &:hover {
+    background-color: #C09BC2;  
+  }
 `;
 
 const JournalEntry = () => {
@@ -314,7 +305,7 @@ const handleCreate = async (e) => {
                   />
                 </div>
               ))}
-              <RoundedButton hoverBackgroundColor="#ccc"
+              <RoundedButton hoverBackgroundColor="#C09BC2"
                 onClick={() => {
                   setFormData(prev => ({
                     ...prev,
@@ -327,10 +318,10 @@ const handleCreate = async (e) => {
             </FormRow>
 
             <ModalButtonRow>
-              <RoundedButton width="81px" fontWeight="600" hoverBackgroundColor="#53B87D" type="submit">
+              <RoundedButton width="81px" fontWeight="600" hoverBackgroundColor="orange" type="submit">
                 Save
               </RoundedButton>
-              <RoundedButton width="81px" fontWeight="600" hoverBackgroundColor="#53B87D"
+              <RoundedButton width="81px" fontWeight="600" hoverBackgroundColor="#C09BC2"
                 onClick={() => isNew ? setNewEntryModal(false) : setUpdateEntry(null)} 
               >
                 Cancel
@@ -362,7 +353,7 @@ const handleCreate = async (e) => {
       <Container>
         <TitleRow>
           <Title>All Journal Entries</Title>
-          <RoundedButton width="107px" fontWeight="600" hoverBackgroundColor="#53B87D"
+          <RoundedButton width="107px" fontWeight="600" hoverBackgroundColor="#C09BC2"
             onClick={() => {
               setFormData({ date: '', description: '', entries: [] });
               setNewEntryModal(true);
@@ -395,7 +386,7 @@ const handleCreate = async (e) => {
               {entries
                 .filter(entry => entry.date.includes(filter))
                 .map(entry => (
-                  <tr key={entry.id}>
+                  <TR key={entry.id}>
                     <Td>{entry.id}</Td>
                     <Td>{new Date(entry.date).toISOString().split('T')[0]}</Td>
                     <Td>{entry.description}</Td>
@@ -408,7 +399,7 @@ const handleCreate = async (e) => {
                     </Td>
                     <Td>
                       <ActionsButtonRow>
-                        <RoundedButton width="75px" hoverBackgroundColor="#53B87D"
+                        <RoundedButton width="75px" hoverBackgroundColor="orange"
                           onClick={() => {
                             setFormData({
                               date: entry.date,
@@ -437,7 +428,7 @@ const handleCreate = async (e) => {
                         </RoundedButton>
                       </ActionsButtonRow>
                     </Td>
-                  </tr>
+                  </TR>
                 ))}
             </tbody>
           </Table>

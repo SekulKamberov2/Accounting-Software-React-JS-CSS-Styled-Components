@@ -1,0 +1,458 @@
+import React, { useEffect, useState } from 'react';
+import styled from 'styled-components';
+ 
+const Container = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  min-width: 300px;
+  width: 90%;
+  margin: 40px auto;
+  padding: 20px;
+  box-sizing: border-box;
+`;
+const RoundedButton = styled.button`
+  padding: 5px 8px;
+  background-color: ${({ backgroundColor }) => backgroundColor || 'transparent'};
+  color: ${({ color }) => color || 'black'};
+  border: 2px solid black;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 1rem; 
+  font-weight: ${({ fontWeight }) => fontWeight}; 
+  margin-left: 3px;
+  width: ${({ width }) => width || 'auto'};  
+  transition: background-color 0.3s ease, color 0.3s ease;
+
+  &:hover {
+    background-color: ${({ hoverBackgroundColor }) => hoverBackgroundColor || 'transparent'};
+    border-color: black; 
+  }
+`;
+const Title = styled.h2`
+  font-size: 26px;
+  font-weight: bold;
+  margin-bottom: 20px;
+`;
+const TitleRow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 80%;
+  margin-bottom: 20px;
+`;
+const SearchInput = styled.input`
+  padding: 10px;
+  width: 77%;
+  margin-bottom: 20px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+`;
+const Table = styled.table`
+  width: 90%;
+  border-collapse: collapse;
+`;
+const Th = styled.th`
+  text-align: left;
+  padding-left: 9px;
+  background-color: #A4CCF5;
+  height: 10px;
+  border-bottom: 2px solid #ddd;
+  color: black;  
+`;
+const Td = styled.td`
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+`;
+const NoResults = styled.div`
+  margin-top: 20px;
+  color: #999;
+  text-align: center;
+`;
+const ModalBackdrop = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+`;
+const Modal = styled.div`
+  background: white;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 600px;
+  padding: 25px;
+  box-sizing: border-box;
+  max-height: 90vh;
+  overflow-y: auto;
+`;
+const FormRow = styled.div`
+  margin-bottom: 15px;
+`;
+const Label = styled.label`
+  font-weight: 600;
+  display: block;
+  margin-bottom: 5px;
+`;
+const Input = styled.input`
+  padding: 8px;
+  width: 100%;
+  box-sizing: border-box;
+`;
+const ModalButtonRow = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+`;
+const ActionsButtonRow = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px; 
+`;
+const ModalButton = styled.button`
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  color: white;
+  background-color: ${({ variant }) =>
+    variant === 'cancel' ? '#777' :
+    variant === 'delete' ? '#E74C3C' :
+    '#27AE60'};
+
+  &:hover {
+    opacity: 0.85;
+  }
+`;
+
+const RecurringInvoices = () => { 
+  const [invoices, setInvoices] = useState([]);
+  const [filter, setFilter] = useState('');
+  const [filteredInvoices, setFilteredInvoices] = useState([]);
+  const [updateInvoice, setUpdateInvoice] = useState(null);
+  const [deleteInvoice, setDeleteInvoice] = useState(null);
+  const [newInvoiceModal, setNewInvoiceModal] = useState(false);
+  const [formData, setFormData] = useState({
+    customerId: '',
+    interval: '',
+    startDate: '',
+    items: [{ description: '', quantity: '', unitPrice: '' }]
+  });
+  const [error, setError] = useState(null);
+ 
+  useEffect(() => {
+    fetchInvoices();
+  }, []);
+
+  const fetchInvoices = async () => {
+    try {
+      const res = await fetch('http://localhost:3010/api/recurring-invoices');
+      if (!res.ok) throw new Error('Failed to fetch invoices');
+      const data = await res.json();
+      setInvoices(data);
+      setFilteredInvoices(data);
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+ 
+  useEffect(() => {
+    const filtered = invoices.filter(inv =>
+      String(inv.id).includes(filter) ||
+      String(inv.customerId).includes(filter) ||
+      inv.interval.toLowerCase().includes(filter.toLowerCase())
+    );
+    setFilteredInvoices(filtered);
+  }, [filter, invoices]);
+ 
+  const handleAddItem = () => {
+    setFormData(prev => ({
+      ...prev,
+      items: [...prev.items, { description: '', quantity: '', unitPrice: '' }]
+    }));
+  };
+
+  const handleRemoveItem = (index) => {
+    setFormData(prev => ({
+      ...prev,
+      items: prev.items.filter((_, i) => i !== index)
+    }));
+  };
+
+  const handleItemChange = (index, field, value) => {
+    const newItems = [...formData.items];
+    newItems[index][field] = value;
+    setFormData(prev => ({ ...prev, items: newItems }));
+  };
+
+  const handleCreate = async (e) => {
+    e.preventDefault();
+    try {
+      const body = {
+        customerId: Number(formData.customerId),
+        interval: formData.interval,
+        startDate: formData.startDate,
+        items: formData.items.map(item => ({
+          description: item.description,
+          quantity: Number(item.quantity),
+          unitPrice: parseFloat(item.unitPrice)
+        })),
+      };
+      const res = await fetch('http://localhost:3010/api/recurring-invoices', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      if (!res.ok) setError('Create failed');
+      await fetchInvoices();
+      setNewInvoiceModal(false);
+      resetForm();
+    } catch (err) {
+        setError(err.message);
+    }
+  };
+
+  const handleUpdate = async (id, data) => {
+    try {
+      const body = {
+        id,
+        customerId: Number(data.customerId),
+        interval: data.interval,
+        startDate: data.startDate,
+        items: data.items.map(item => ({
+          description: item.description,
+          quantity: Number(item.quantity),
+          unitPrice: parseFloat(item.unitPrice)
+        })),
+      };
+      const res = await fetch(`http://localhost:3010/api/recurring-invoices/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      if (!res.ok) setError('Update failed');
+      await fetchInvoices();
+      setUpdateInvoice(null);
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      const res = await fetch(`http://localhost:3010/api/recurring-invoices/${id}`, {
+        method: 'DELETE',
+      });
+      if (!res.ok) throw new Error('Delete failed');
+      await fetchInvoices();
+      setDeleteInvoice(null);
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const resetForm = () => {
+    setFormData({
+      customerId: '',
+      interval: '',
+      startDate: '',
+      items: [{ description: '', quantity: '', unitPrice: '' }]
+    });
+    setError(null);
+  };
+ 
+  const renderModal = (invoice, isNew = false) => (
+    <ModalBackdrop onClick={() => {
+      if (isNew) {
+        setNewInvoiceModal(false);
+      } else {
+        setUpdateInvoice(null);
+      }
+      resetForm();
+    }}>
+      <Modal onClick={e => e.stopPropagation()}>
+        <form onSubmit={isNew ? handleCreate : (e) => {
+          e.preventDefault();
+          handleUpdate(invoice.id, formData);
+        }}>
+          <Title>{isNew ? 'New Recurring Invoice' : 'Update Recurring Invoice'}</Title> 
+          <FormRow>
+            <Label>Customer ID</Label>
+            <Input type="number" value={formData.customerId}
+              onChange={e => setFormData(prev => ({ ...prev, customerId: e.target.value }))}
+              required
+            />
+          </FormRow> 
+          <FormRow>
+            <Label>Interval (e.g. Monthly, Weekly)</Label>
+            <Input value={formData.interval}
+              onChange={e => setFormData(prev => ({ ...prev, interval: e.target.value }))}
+              required
+            />
+          </FormRow> 
+          <FormRow>
+            <Label>Start Date</Label>
+            <Input type="date" value={formData.startDate}
+              onChange={e => setFormData(prev => ({ ...prev, startDate: e.target.value }))}
+              required
+            />
+          </FormRow> 
+          <Title>Items</Title> 
+          {formData.items.map((item, i) => (
+            <div key={i} style={{ borderBottom: '1px solid #ddd', paddingBottom: 10, marginBottom: 10 }}>
+              <FormRow>
+                <Label>Description</Label>
+                <Input value={item.description}  required
+                  onChange={e => handleItemChange(i, 'description', e.target.value)} 
+                />
+              </FormRow>
+              <FormRow>
+                <Label>Quantity</Label>
+                <Input type="number" min="0" value={item.quantity}  required
+                  onChange={e => handleItemChange(i, 'quantity', e.target.value)} 
+                />
+              </FormRow>
+              <FormRow>
+                <Label>Unit Price</Label>
+                <Input type="number" min="0" step="0.01" value={item.unitPrice}
+                  onChange={e => handleItemChange(i, 'unitPrice', e.target.value)}  required 
+                />
+              </FormRow>
+              <RoundedButton hoverBackgroundColor="red" color="black"
+                onClick={() => handleRemoveItem(i)}
+                style={{ marginTop: '6px' }}
+              >
+                Remove Item
+              </RoundedButton>
+            </div>
+          ))} 
+          <RoundedButton hoverBackgroundColor="orange" color="black" onClick={handleAddItem}>
+            Add Item
+          </RoundedButton> 
+          <ModalButtonRow>
+            <RoundedButton hoverBackgroundColor="#A4CCF5" color="black" onClick={() => {
+              if (isNew) {
+                setNewInvoiceModal(false);
+              } else {
+                setUpdateInvoice(null);
+              }
+              resetForm();
+            }}>Cancel</RoundedButton>
+            <RoundedButton hoverBackgroundColor="orange" color="black" type="submit">{isNew ? 'Create' : 'Update'}</RoundedButton>
+          </ModalButtonRow> 
+          {error && <p style={{ color: 'red', marginTop: '10px' }}>{error}</p>}
+        </form>
+      </Modal>
+    </ModalBackdrop>
+  );
+ 
+  const renderDeleteModal = (invoice) => (
+    <ModalBackdrop onClick={() => setDeleteInvoice(null)}>
+      <Modal onClick={e => e.stopPropagation()}>
+        <Title>Delete Recurring Invoice</Title>
+        <p>Are you sure you want to delete invoice #{invoice.id}?</p>
+        <ModalButtonRow>
+          <RoundedButton hoverBackgroundColor="#A4CCF5" color="black" onClick={() => setDeleteInvoice(null)}>Cancel</RoundedButton>
+          <RoundedButton hoverBackgroundColor="red" color="black" onClick={() => handleDelete(invoice.id)}>Delete</RoundedButton>
+        </ModalButtonRow>
+      </Modal>
+    </ModalBackdrop>
+  );
+
+  return (
+    <>
+      <TitleRow>
+        <Title>Recurring Invoices</Title>
+        <RoundedButton hoverBackgroundColor="#A4CCF5" color="black"
+          onClick={() => {
+            resetForm();
+            setNewInvoiceModal(true);
+          }}
+          fontWeight="bold"
+          width="210px"
+        >
+          New Recurring Invoice
+        </RoundedButton>
+      </TitleRow>
+
+      <SearchInput type="text" placeholder="Search by invoice ID, customer ID or interval" value={filter}
+        onChange={e => setFilter(e.target.value)}
+      />
+
+      <Container>
+        {filteredInvoices.length === 0 && <NoResults>No recurring invoices found.</NoResults>}
+
+        {filteredInvoices.length > 0 && (
+          <Table>
+            <thead>
+              <tr>
+                <Th>ID</Th>
+                <Th>Customer ID</Th>
+                <Th>Interval</Th>
+                <Th>Start Date</Th>
+                <Th>Items</Th>
+                <Th>Actions</Th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredInvoices.map(inv => (
+                <tr key={inv.id}>
+                  <Td>{inv.id}</Td>
+                  <Td>{inv.customerId}</Td>
+                  <Td>{inv.interval}</Td>
+                  <Td> {inv.startDate && !isNaN(new Date(inv.startDate)) ? new Date(inv.startDate).toISOString().slice(0, 10) : 'Invalid date'}</Td>
+                  <Td>
+                    {inv.items.map((item, i) => (
+                      <div key={i}>
+                        {item.description} — Qty: {item.quantity}, Price: ${item.unitPrice.toFixed(2)}
+                      </div>
+                    ))}
+                  </Td>
+                  <Td>
+                    <RoundedButton hoverBackgroundColor="orange" color="black"
+                      onClick={() => {
+                        setUpdateInvoice(inv);
+                        setFormData({
+                          customerId: inv.customerId,
+                          interval: inv.interval,
+                          startDate: inv.startDate,
+                          items: inv.items.map(it => ({
+                            description: it.description,
+                            quantity: it.quantity,
+                            unitPrice: it.unitPrice
+                          }))
+                        });
+                      }}
+                    >
+                      Update
+                    </RoundedButton>
+                    <RoundedButton hoverBackgroundColor="red" color="black"
+                      onClick={() => setDeleteInvoice(inv)}
+                      style={{ marginLeft: '5px' }}
+                    >
+                      Delete
+                    </RoundedButton>
+                  </Td>
+                </tr>
+              ))}
+            </tbody> 
+          </Table>
+        )}
+      </Container>
+
+      {newInvoiceModal && renderModal(null, true)}
+      {updateInvoice && renderModal(updateInvoice, false)}
+      {deleteInvoice && renderDeleteModal(deleteInvoice)}
+    </>
+  );
+};
+
+export default RecurringInvoices;

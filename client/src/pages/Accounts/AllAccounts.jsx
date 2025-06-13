@@ -64,7 +64,7 @@ const Th = styled.th`
   background-color: #53B87D;
   height: 10px;
   border-bottom: 2px solid #ddd;
-  color: white;  
+  color: black;  
 `;
 
 const Td = styled.td`
@@ -262,9 +262,9 @@ const AllAccounts = () => {
             <Label>Code</Label>
             <Input name="Code" value={formData.Code} onChange={e => setFormData(prev => ({ ...prev, Code: e.target.value }))} required />
           </FormRow>
-          <ModalButtonRow>
-            <ModalButton type="submit">Save</ModalButton>
-            <ModalButton variant="cancel" type="button" onClick={() => isNew ? setNewAccountModal(false) : setUpdateAccount(null)}>Cancel</ModalButton>
+          <ModalButtonRow> 
+            <RoundedButton type="submit" hoverBackgroundColor="orange" color="black">Save</RoundedButton> 
+            <RoundedButton hoverBackgroundColor="#53B87D" color="black" onClick={() => isNew ? setNewAccountModal(false) : setUpdateAccount(null)}>Cancel</RoundedButton>
           </ModalButtonRow>
         </form>
       </Modal>
@@ -277,8 +277,8 @@ const AllAccounts = () => {
         <h3>Delete Account ID {account.Id}</h3>
         <p>Are you sure you want to delete <b>{account.Name}</b>?</p>
         <ModalButtonRow>
-          <ModalButton variant="delete" onClick={() => handleDelete(account.Id)}>Delete</ModalButton>
-          <ModalButton variant="cancel" onClick={() => setDeleteAccount(null)}>Cancel</ModalButton>
+         <RoundedButton hoverBackgroundColor="red" color="black" onClick={() => handleDelete(account.Id)}>Delete</RoundedButton>
+         <RoundedButton hoverBackgroundColor="#53B87D" color="black" onClick={() => setDeleteAccount(null)}>Cancel</RoundedButton>
         </ModalButtonRow>
       </Modal>
     </ModalBackdrop>
