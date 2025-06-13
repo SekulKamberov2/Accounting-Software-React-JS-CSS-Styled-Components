@@ -6,7 +6,7 @@ const Container = styled.div`
   min-width: 300px;
   width: 70%;
 `;
-  
+
 const TitleRow = styled.div`
   display: flex;
   align-items: center;
@@ -14,6 +14,13 @@ const TitleRow = styled.div`
   width: 100%;
   margin-bottom: 20px;
   margin: 40px auto;
+`;
+
+const ModalButtonRow = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
 `;
 
 const RoundedButton = styled.button`
@@ -50,13 +57,16 @@ const Label = styled.label`
   flex-direction: column;
   font-size: 0.9rem;
 `;
+
 const SearchInput = styled.input`
   padding: 10px;
   width: 97.5%;
+  min-width: 481px;
   margin-bottom: 20px;
   border-radius: 6px;
   border: 1px solid #ccc;
 `;
+
 const Input = styled.input`
   padding: 0.5rem;
   margin-top: 0.25rem;
@@ -69,20 +79,7 @@ const Select = styled.select`
   margin-top: 0.25rem;
   border: 1px solid #ccc;
   border-radius: 4px;
-`;
-
-const Button = styled.button`
-  padding: 0.5rem 1rem;
-  background-color: #2ecc71;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-
-  &:hover {
-    background-color: #27ae60;
-  }
-`;
+`; 
 
 const Table = styled.table`
   width: 100%;
@@ -92,14 +89,13 @@ const Table = styled.table`
 const Th = styled.th`
   text-align: left;
   padding: 0.17rem 0.17rem 0.17rem 0.75rem;
-  background-color: #f5f5f5; 
+  background-color: #F78745;
   border-bottom: 2px solid #ddd;
-  background-color: #F78745; 
 `;
 
 const Td = styled.td`
   padding: 0.75rem;
-  border-bottom: 1px solid #eee; 
+  border-bottom: 1px solid #eee;
 `;
 
 const ErrorMsg = styled.p`
@@ -131,27 +127,19 @@ const ModalContent = styled.div`
   max-width: 500px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
   position: relative;
-`;
-
-const CloseButton = styled.button`
-  position: absolute;
-  top: 0.5rem;
-  right: 1rem;
-  background: transparent;
-  border: none;
-  font-size: 1.25rem;
-  cursor: pointer;
 `; 
 
 const TR = styled.tr`
   &:hover {
-    background-color: #f7d2ba
+    background-color: #f7d2ba;
   }
 `;
 
 const Payments = () => {
   const [payments, setPayments] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editPayment, setEditPayment] = useState(null);
+  const [deletePayment, setDeletePayment] = useState(null);
   const [formData, setFormData] = useState({
     invoice_id: '',
     amount: '',
@@ -168,11 +156,11 @@ const Payments = () => {
 
   const fetchPayments = async () => {
     try {
-        const res = await fetch('http://localhost:3010/api/payments');
-        const data = await res.json();
-        setPayments(data || []);
+      const res = await fetch('http://localhost:3010/api/payments');
+      const data = await res.json();
+      setPayments(data || []);
     } catch (err) {
-        setError('Failed to load payments');
+      setError('Failed to load payments');
     }
   };
 
@@ -186,26 +174,46 @@ const Payments = () => {
     setError('');
     setSuccess('');
 
+    const method = editPayment ? 'PUT' : 'POST';
+    const url = editPayment
+      ? `http://localhost:3010/api/payments/${editPayment.Id}`
+      : `http://localhost:3010/api/payments`;
+
     try {
-      const res = await fetch('http://localhost:3010/api/payments', {
-        method: 'POST',
+      const res = await fetch(url, {
+        method,
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(formData)
       });
 
-      const result = await res.json(); 
-      if (!res.ok) {
-        setError(result.message || 'Failed to record payment');
-      }
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.message || 'Failed to save payment');
 
-      setSuccess('Payment recorded successfully');
+      setSuccess(editPayment ? 'Payment updated successfully' : 'Payment recorded successfully');
       setFormData({ invoice_id: '', amount: '', date: '', method: 'cash' });
-      fetchPayments();
+      setEditPayment(null);
       setIsModalOpen(false);
+      fetchPayments();
     } catch (err) {
-        setError(err.message);
+      setError(err.message);
+    }
+  };
+
+  const handleDelete = async id => {
+    try {
+      const res = await fetch(`http://localhost:3010/api/payments/${id}`, {
+        method: 'DELETE'
+      });
+
+      if (!res.ok) throw new Error('Failed to delete payment');
+
+      setSuccess('Payment deleted successfully');
+      setDeletePayment(null);
+      fetchPayments();
+    } catch (err) {
+      setError(err.message);
     }
   };
 
@@ -217,79 +225,135 @@ const Payments = () => {
 
   return (
     <Container>
-        <TitleRow>
-          <Title>Record Payment</Title>
-          <RoundedButton width="137px" fontWeight="600" hoverBackgroundColor="#F78745"
-            onClick={() => setIsModalOpen(true)}
-          >
-            New Payment
-          </RoundedButton>
-        </TitleRow>
+      <TitleRow>
+        <Title>Payments</Title>
+        <RoundedButton width="137px" fontWeight="600" hoverBackgroundColor="#F78745"
+          onClick={() => {
+            setFormData({ invoice_id: '', amount: '', date: '', method: 'cash' });
+            setEditPayment(null);
+            setIsModalOpen(true);
+            setError('');
+            setSuccess('');
+          }}
+        >
+          New Payment
+        </RoundedButton>
+      </TitleRow>
 
-        <ModalOverlay visible={isModalOpen}>
+      <ModalOverlay visible={isModalOpen}>
+        <ModalContent> 
+          <Form onSubmit={handleSubmit}>
+            <Label>
+              Invoice ID:
+              <Input type="number" name="invoice_id" value={formData.invoice_id} required onChange={handleChange} />
+            </Label>
+            <Label>
+              Amount:
+              <Input type="number" name="amount" value={formData.amount} required step="0.01" onChange={handleChange} />
+            </Label>
+            <Label>
+              Date:
+              <Input type="date" name="date" value={formData.date} required onChange={handleChange} />
+            </Label>
+            <Label>
+              Method:
+              <Select name="method" value={formData.method} onChange={handleChange}>
+                <option value="cash">Cash</option>
+                <option value="credit_card">Credit Card</option>
+                <option value="bank_transfer">Bank Transfer</option>
+              </Select>
+            </Label>
+            <ModalButtonRow> 
+                <RoundedButton width="83px" hoverBackgroundColor="orange" fontWeight="600" type="submit">
+                    {editPayment ? 'Update' : 'Submit'}
+                </RoundedButton>
+                <RoundedButton width="92px" fontWeight="600" hoverBackgroundColor="#F78745"
+                    onClick={() => setIsModalOpen(false)}
+                >
+                    Cancel
+                </RoundedButton>  
+           </ModalButtonRow>   
+
+
+
+            {error && <ErrorMsg>{error}</ErrorMsg>}
+            {success && <SuccessMsg>{success}</SuccessMsg>}
+          </Form>
+        </ModalContent>
+      </ModalOverlay>
+
+      {deletePayment && (
+        <ModalOverlay visible={true}>
           <ModalContent>
-            <CloseButton onClick={() => setIsModalOpen(false)}>&times;</CloseButton>
-            <Form onSubmit={handleSubmit}>
-              <Label>
-                Invoice ID:
-                <Input type="number" name="invoice_id" value={formData.invoice_id}  required
-                  onChange={handleChange} 
-                />
-              </Label>
-              <Label>
-                Amount:
-                <Input type="number" name="amount" value={formData.amount} required step="0.01"
-                  onChange={handleChange} 
-                />
-              </Label>
-              <Label>
-                Date:
-                <Input type="date" name="date" value={formData.date} required
-                  onChange={handleChange} 
-                />
-              </Label>
-              <Label>
-                Method:
-                <Select name="method" value={formData.method} onChange={handleChange}>
-                  <option value="cash">Cash</option>
-                  <option value="credit_card">Credit Card</option>
-                  <option value="bank_transfer">Bank Transfer</option>
-                </Select>
-              </Label>
-              <Button type="submit">Submit Payment</Button>
-              {error && <ErrorMsg>{error}</ErrorMsg>}
-              {success && <SuccessMsg>{success}</SuccessMsg>}
-            </Form>
+            <p>Are you sure you want to delete payment ID {deletePayment.Id}?</p>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '20px' }}>
+              <RoundedButton width="81px" fontWeight="600" hoverBackgroundColor="red"
+                onClick={() => handleDelete(deletePayment.Id)}
+              >
+                Delete
+              </RoundedButton>
+              <RoundedButton width="81px" fontWeight="600" hoverBackgroundColor="#C09BC2"
+                onClick={() => setDeletePayment(null)}
+              >
+                Cancel
+              </RoundedButton>
+            </div>
           </ModalContent>
-        </ModalOverlay> 
+        </ModalOverlay>
+      )} 
+      
+      <Label>
+        <SearchInput type="text" placeholder="Search by Invoice ID, Method, or Date" value={searchTerm}
+          onChange={e => setSearchTerm(e.target.value)}
+        />
+      </Label>
 
-        <Label> 
-          <SearchInput type="text" placeholder="Search by Invoice ID, Method, or Date" value={searchTerm}
-            onChange={e => setSearchTerm(e.target.value)}
-          />
-        </Label>
-        <Table>
-          <thead>
-            <tr>
-              <Th>ID</Th>
-              <Th>Invoice ID</Th>
-              <Th>Amount</Th>
-              <Th>Date</Th>
-              <Th>Method</Th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredPayments.map(p => (
-              <TR key={p.Id}>
-                <Td>{p.Id}</Td>
-                <Td>{p.InvoiceId}</Td>
-                <Td>{p.Amount}</Td>
-                <Td>{new Date(p.Date).toISOString().split('T')[0]}</Td>
-                <Td>{p.Method}</Td>
-              </TR>
-            ))}
-          </tbody>
-        </Table>
+      <Table>
+        <thead>
+          <tr>
+            <Th>ID</Th>
+            <Th>Invoice ID</Th>
+            <Th>Amount</Th>
+            <Th>Date</Th>
+            <Th>Method</Th>
+            <Th>Actions</Th>
+          </tr>
+        </thead>
+        <tbody>
+          {filteredPayments.map(p => (
+            <TR key={p.Id}>
+              <Td>{p.Id}</Td>
+              <Td>{p.InvoiceId}</Td>
+              <Td>{p.Amount}</Td>
+              <Td>{new Date(p.Date).toISOString().split('T')[0]}</Td>
+              <Td>{p.Method}</Td>
+              <Td>
+                <RoundedButton width="75px" hoverBackgroundColor="orange"
+                  onClick={() => {
+                    setEditPayment(p);
+                    setFormData({
+                      invoice_id: p.InvoiceId,
+                      amount: p.Amount,
+                      date: new Date(p.Date).toISOString().split('T')[0],
+                      method: p.Method
+                    });
+                    setIsModalOpen(true);
+                    setError('');
+                    setSuccess('');
+                  }}
+                >
+                  Update
+                </RoundedButton>
+                <RoundedButton width="75px" hoverBackgroundColor="red"
+                  onClick={() => setDeletePayment(p)}
+                >
+                  Delete
+                </RoundedButton>
+              </Td>
+            </TR>
+          ))}
+        </tbody>
+      </Table>
     </Container>
   );
 };

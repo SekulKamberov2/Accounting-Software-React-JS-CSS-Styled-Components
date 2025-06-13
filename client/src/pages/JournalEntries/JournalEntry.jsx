@@ -137,9 +137,7 @@ const ModalButtonRow = styled.div`
   gap: 10px;
   margin-top: 20px;
 `;
-
  
-
 const ActionsButtonRow = styled.div`
   display: flex;
   justify-content: flex-end;
