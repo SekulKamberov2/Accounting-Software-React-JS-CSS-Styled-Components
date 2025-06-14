@@ -5,20 +5,19 @@ import UserLayout from './components/UserLayout';
 import ProfilePage from './pages/ProfilePage'; 
 import AllUsers from './pages/AllUsers'; 
 
-import Payments from './pages/Payments/Payments.jsx';  
+import Payments from './pages/Payments.jsx';  
 import InvoicePage from './pages/InvoicePage.jsx';  
-import AllAccounts from './pages/Accounts/AllAccounts.jsx'; 
+import Accounts from './pages/Accounts.jsx'; 
 
-import Taxes from './pages/Taxes/Taxes.jsx'; 
+import Taxes from './pages/Taxes.jsx'; 
 
-import BankTransactions from './pages/BankTransactions/BankTransactions.jsx'; 
+import BankTransactions from './pages/BankTransactions.jsx'; 
  
-import JournalEntry from './pages/JournalEntries/JournalEntry.jsx'; 
+import JournalEntry from './pages/JournalEntry.jsx'; 
   
-import AllExpenses from './pages/Expenses/AllExpenses.jsx'; 
-import ExpensesByDateRange from './pages/Expenses/ExpensesByDateRange.jsx';  
+import Expenses from './pages/Expenses.jsx'; 
  
-import RecurringInvoices from './pages/RecurringInvoices/RecurringInvoices.jsx'; 
+import RecurringInvoices from './pages/RecurringInvoices.jsx'; 
  
 import Vendors from './pages/Vendors.jsx'; 
 
@@ -38,10 +37,10 @@ function App() {
           <Route path="/profile" element={<ProfilePage />}> 
             <Route index element={<InvoicePage />} /> 
             <Route path="payments" element={<Payments />} />  
-            <Route path="accounts" element={<AllAccounts />} />  
+            <Route path="accounts" element={<Accounts />} />  
             <Route path="journal-entries" element={<JournalEntry />} />  
-            <Route path="expenses" element={<AllExpenses />} /> 
-            <Route path="expenses/date-range" element={<ExpensesByDateRange />} />  
+            <Route path="expenses" element={<Expenses />} /> 
+          
             <Route path="vendors" element={<Vendors />} />  
             <Route path="bank-transactions" element={<BankTransactions />} />  
             <Route path="taxes" element={<Taxes />} /> 

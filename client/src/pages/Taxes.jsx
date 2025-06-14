@@ -1,33 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-
-const Container = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  min-width: 300px;
-  width: 80%;
-  margin: 40px auto;
-  padding: 20px;
-  box-sizing: border-box;
-`;
+import { PageContainer, ActionsButtonRow, Cell, Items, TableRow, TableHeader, TableWrapper  } from '../components/ui/GridComponents'; 
+import { PageHeader } from '../components/ui/PageHeader';
+import { SearchInput } from '../components/ui/SearchInput';
+ 
 
 const ErrorMessage = styled.div`
-display: flex;
-  justify-content: center;
-  color: red;
-  margin-top: 10px;
-`;
-
-const SuccessMessage = styled.div`
   display: flex;
   justify-content: center;
-  color: green;
-  margin-top: 10px;
-  font-weight: 700;
-  font-size: 35px;
-  padding-bottom: 10px
-`;
+  align-items: center;
+  color: red;
+  margin-top: 10px;  
+  width: 100%;
+  height: 60px;
+  padding: 10px;
+`; 
 
 const RoundedButton = styled.button`
   padding: 5px 8px;
@@ -53,41 +40,7 @@ const Title = styled.h2`
   font-weight: bold;
   margin-bottom: 20px;
 `;
-
-const TitleRow = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 80%;
-  margin-bottom: 20px;
-`;
-
-const SearchInput = styled.input`
-  padding: 10px;
-  width: 78%;
-  margin-bottom: 20px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-`;
-
-const Table = styled.table`
-  width: 80%;
-  border-collapse: collapse;
-`;
-
-const Th = styled.th`
-  text-align: left;
-  padding-left: 9px;
-  background-color: #888DBF;
-  height: 10px;
-  border-bottom: 2px solid #ddd;
-  color: black;  
-`;
-
-const Td = styled.td`
-  padding: 10px;
-  border-bottom: 1px solid #eee;
-`;
+ 
 
 const NoResults = styled.div`
   margin-top: 20px;
@@ -158,7 +111,7 @@ const ModalButton = styled.button`
   }
 `;
 
-const ActionsButtonRow = styled.div`
+const ActionsButtonRow2 = styled.div`
   display: flex;
   justify-content: flex-end;
   gap: 10px;
@@ -322,48 +275,47 @@ const Taxes = () => {
     </ModalBackdrop>
   );
 
-  return (
-    <>
-    <Container>
-      <TitleRow>
-        <Title>All Taxes</Title>
+  return ( 
+    <PageContainer> 
+      <PageHeader
+        title="All Taxes"
+        error={error}
+        buttonText="New Tax"
+        buttonColor="white" 
+        buttonHoverBg="#888DBF" 
+        buttonWidth="101px"
+        onButtonClick={() => {
+          setFormData({ name: '', rate: '' });
+          setNewTaxModal(true);
+          setError(""); 
+        }}  
+      />   
+      <SearchInput
+        type="text"
+        placeholder="Search by name or rate..."
+        value={filter}
+        onChange={e => setFilter(e.target.value)}
+      /> 
 
-          {error && <ErrorMessage>{error}</ErrorMessage>}   
-
-        <RoundedButton width="101px" fontWeight="600" hoverBackgroundColor="#888DBF"
-          onClick={() => {
-            setFormData({ name: '', rate: '' });
-            setNewTaxModal(true);
-            setError(""); 
-          }}
-        >
-          New Tax
-        </RoundedButton>
-      </TitleRow>
-   
-      <SearchInput type="text" placeholder="Search by name or rate..."
-        value={filter} onChange={e => setFilter(e.target.value)}
-      />
+      {error && <ErrorMessage>{error}</ErrorMessage>} 
 
       {filteredTaxes.length === 0 ? (
         <NoResults>No matching taxes found.</NoResults>
       ) : (
-        <Table>
-          <thead>
-            <tr>
-              <Th>ID</Th>
-              <Th>Name</Th>
-              <Th>Rate (%)</Th>
-              <Th style={{textAlign: 'center'}}>Actions</Th>
-            </tr>
-          </thead>
+        <TableWrapper>
+          <TableHeader backgroundColor="#888DBF"> 
+              <Cell>ID</Cell>
+              <Cell>Name</Cell>
+              <Cell>Rate (%)</Cell>
+              <Cell>Actions</Cell> 
+          </TableHeader>
           <tbody>
             {filteredTaxes.map(tax => (
-              <tr key={tax.Id}>
-                <Td>{tax.Id}</Td>
-                <Td>{tax.Name}</Td>
-                <Td>{tax.Rate}</Td>
-                <Td>
+              <TableRow key={tax.Id} backgroundColor="#ced3ff;">
+                <Cell>{tax.Id}</Cell>
+                <Cell>{tax.Name}</Cell>
+                <Cell>{tax.Rate}</Cell>
+                <Cell>
                   <ActionsButtonRow>
                     <RoundedButton width="75px" hoverBackgroundColor="orange"
                       onClick={() => {
@@ -385,11 +337,11 @@ const Taxes = () => {
                       Delete
                     </RoundedButton>
                   </ActionsButtonRow>
-                </Td>
-              </tr>
+                </Cell>
+              </TableRow>
             ))}
           </tbody>
-        </Table>
+        </TableWrapper>
         
       )}
 
@@ -397,8 +349,7 @@ const Taxes = () => {
       {deleteTaxItem && renderDeleteModal(deleteTaxItem)}
       {newTaxModal && renderModal({}, true)} 
  
-    </Container>  
-    </>
+    </PageContainer>   
   );
 };
 

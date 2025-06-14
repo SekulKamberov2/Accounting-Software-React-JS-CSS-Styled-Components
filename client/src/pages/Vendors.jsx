@@ -1,5 +1,8 @@
 import { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import { PageContainer, ActionsButtonRow, Cell, Items, TableRow, TableHeader, TableWrapper  } from '../components/ui/GridComponents'; 
+import { PageHeader } from '../components/ui/PageHeader';
+import { SearchInput } from '../components/ui/SearchInput';
 
 const Container = styled.div`
   padding: 2rem;
@@ -226,15 +229,16 @@ const Vendors = () => {
   );
 
   return (
-    <Container>
-      <TitleRow>
-        <Title>Vendors</Title>
-        <RoundedButton width="137px" fontWeight="600" hoverBackgroundColor="#98CAD4"
-          onClick={() => setIsModalOpen(true)}
-        >
-          New Vendor
-        </RoundedButton>
-      </TitleRow>
+    <PageContainer> 
+      <PageHeader
+        title="Vendors"
+        error={error}
+        buttonText="New Vendor"
+        buttonColor="white" 
+        buttonHoverBg="#98CAD4" 
+        buttonWidth="137px"
+        onButtonClick={() => setIsModalOpen(true)}  
+      />
 
       <ModalOverlay visible={isModalOpen}>
         <ModalContent> 
@@ -268,29 +272,36 @@ const Vendors = () => {
         </ModalContent>
       </ModalOverlay>
 
+{/*    
       <Label>
         <Input type="text" placeholder="Search by Name, Email, or Phone" value={searchTerm}
           onChange={e => setSearchTerm(e.target.value)}
         />
       </Label>
-      <Table>
-        <thead>
-          <tr>
-            <Th>ID</Th>
-            <Th>Name</Th>
-            <Th>Email</Th>
-            <Th>Phone</Th>
-            <Th>Actions</Th>
-          </tr>
-        </thead>
+*/}
+        <SearchInput
+          type="text"
+          placeholder="Search by Name, Email, or Phone"
+          value={searchTerm}
+          onChange={e => setSearchTerm(e.target.value)}
+        /> 
+
+        <TableWrapper> 
+        <TableHeader backgroundColor="#98CAD4">  
+            <Cell>ID</Cell>
+            <Cell>Name</Cell>
+            <Cell>Email</Cell>
+            <Cell>Phone</Cell>
+            <Cell>Actions</Cell> 
+        </TableHeader>
         <tbody>
-          {filteredVendors.map(v => (
-            <TR key={v.Id}>
-              <Td>{v.Id}</Td>
-              <Td>{v.Name}</Td>
-              <Td>{v.ContactEmail}</Td>
-              <Td>{v.Phone}</Td>
-              <Td>
+          {filteredVendors.map(v => ( 
+            <TableRow key={v.Id} backgroundColor="#b8f1fc;">
+              <Cell>{v.Id}</Cell>
+              <Cell>{v.Name}</Cell>
+              <Cell>{v.ContactEmail}</Cell>
+              <Cell>{v.Phone}</Cell>
+              <Cell>
                 <RoundedButton hoverBackgroundColor="orange" color="black"
                   onClick={() => handleUpdate(v.Id)}
                 >
@@ -301,12 +312,12 @@ const Vendors = () => {
                 >
                   Delete
                 </RoundedButton>
-              </Td>
-            </TR>
+              </Cell>
+            </TableRow>
           ))}
         </tbody>
-      </Table>
-    </Container>
+      </TableWrapper>
+    </PageContainer>
   );
 };
 

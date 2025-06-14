@@ -1,4 +1,4 @@
-const AllExpenses = () => {
+const Expenses = () => {
   return (
     <div>
       <h1>Delete Journal Entry</h1>
@@ -6,4 +6,4 @@ const AllExpenses = () => {
     </div>
   );
 };
-export default AllExpenses;
+export default Expenses;

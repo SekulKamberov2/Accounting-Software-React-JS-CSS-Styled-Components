@@ -1,56 +1,72 @@
 import { useState, useEffect } from 'react';
+
 import styled from 'styled-components';
-
- 
-
-const RoundedButton = styled.button`
-  padding: 5px 8px;
-  background-color: ${({ backgroundColor }) => backgroundColor || 'transparent'};
-  color: ${({ color }) => color || 'black'};
-  border: 2px solid black;
-  border-radius: 10px;
-  cursor: pointer;
-  font-size: 1rem;
-  font-weight: 650;
-  margin-left: 3px;
-  width: ${({ width }) => width || 'auto'};  
-  transition: background-color 0.3s ease, color 0.3s ease;
-
-  &:hover {
-    background-color: ${({ hoverBackgroundColor }) => hoverBackgroundColor || 'transparent'};
-    border-color: black; 
-  }
-`;
+import { RoundedButton } from '../components/ui/Buttons'; 
+import { SearchInput } from '../components/ui/SearchInput';  
+import { PageHeader } from '../components/ui/PageHeader';
 
 const PageContainer = styled.div`
   display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  padding: 30px;
+  box-sizing: border-box; 
+  width: 100%;
+  max-width: 900px; 
+  margin: 0 auto; 
+  
+  @media (max-width: 768px) {
+    padding: 20px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 15px; 
+  }
+`; 
+
+ const TitleRow = styled.div`
+  display: flex; 
+  flex-wrap: nowrap; 
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 1rem;
+  width: 100%;
+  margin-bottom: 20px; 
+`;
+
+const LeftSection = styled.div`
+  flex: 1 1 60%;
+  display: flex;
+  flex-direction: column; 
+`;
+
+const RightSection = styled.div`
+  flex: 1 1 auto;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center; 
+`;
+ 
+const ProfileHeader = styled.div`
+  font-size: 26px; 
+  font-weight: bold;
+  margin-bottom: 8px; 
+`;
+ 
+const ErrorMessage = styled.div`
+  display: flex;
   justify-content: center;
   align-items: center;
-  flex-direction: column; 
-  padding: 30px;
+  text-align: center; 
+  color: red;
+  background-color: #ffe5e5;  
+  padding: 10px;
+  min-height: 50px;
+  width: 100%;
   box-sizing: border-box;
-`;
-
-const ProfileHeader = styled.div`
-  font-size: 26px;
-  font-weight: bold;
-  margin-bottom: 20px;
-   
-  margin-bottom: 3px;
-`;
-
-const Button = styled.button`
-  padding: 10px 20px;
-  font-size: 16px;
-  border-radius: 5px;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  width: 45%; 
-
-  &:hover {
-    opacity: 0.9;
-  }
+  border-radius: 4px;
 `;
 
 const FormRow = styled.div`
@@ -104,15 +120,7 @@ const TitleWrapper = styled.div`
   margin-top: 25px;
   height: 50px
   padding: 10px;
-`; 
-
-const TitleRow = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 67%;
-  margin-bottom: 20px;
-`;
+`;  
 
 const ModalBackdrop = styled.div`
   position: fixed;
@@ -151,8 +159,7 @@ const Table = styled.table`
     background-color: #f0f0f0;
   }
 `;
- 
-
+  
 const NOINVOICES = styled.div`
   display: flex;
   flex-direction: column;
@@ -205,23 +212,58 @@ const UpdateButton = styled.button`
   }
 `;
 
-const SearchInput = styled.input`
-  padding: 10px;
-  width: 65%;
-  margin-bottom: 20px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
+ 
+ 
+const InvoiceHeader = styled.div`
+  display: flex;
+  gap: 20px;
+  margin-bottom: 15px;
+  align-items: center;
+  flex-wrap: wrap;
+
+  @media (max-width: 480px) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+`; 
+
+const TextContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex: 1;  
+  min-width: 0;  
+  
+  span {
+    margin-bottom: 4px;
+    font-size: 0.9rem;
+    color: #333;
+    line-height: 1.3;
+  }
+  
+  strong {
+    color: #222;
+  }
 `;
 
 const Container = styled.div`
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  min-width: 600px;
-  width: 70%;
-  margin: 40px auto;
-  padding: 20px;
+  width: 100%;  
   box-sizing: border-box;
+  
+`;
+const InvoiceCard = styled.div`
+  background: lightsteelblue;
+  padding: 15px;
+  border-radius: 8px;
+  flex: 1 1 300px;
+  max-width: 900px; 
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+  margin-top: 10px; 
 `;
 
 const NoResults = styled.div`
@@ -230,18 +272,10 @@ const NoResults = styled.div`
   text-align: center;
   width: 100%;
 `;
-
-const InvoiceHeader = styled.div`
-  display: flex;
-  gap: 20px;
-  margin-bottom: 15px;
-  align-items: center;
   
-`;
-
 const Picture = styled.img`
-  width: 80px;
-  height: 80px;
+  width: 120px;
+  height: 120px;
   border-radius: 50%;
   object-fit: cover;
 `;
@@ -251,22 +285,8 @@ const ButtonWrapper = styled.div`
   gap: 10px;
   margin-top: 15px;
   justify-content: flex-end;
-`;
-
-const TextContent = styled.div`
-  display: flex;
-  flex-direction: column; 
-`;
-
-const ErrorMessage = styled.div`
-display: flex;
-  justify-content: center;
-  color: red;
-  margin-top: 10px;
-`;
-
+`;  
  
-
 function InvoicePage() {
   const [invoices, setInvoices] = useState([]);
   const [loading, setLoading] = useState(false); 
@@ -431,19 +451,17 @@ function InvoicePage() {
   }
 
   return (
-    <PageContainer>   
-      <TitleRow>
-        <ProfileHeader>Invoices</ProfileHeader>
-
-        {error && <ErrorMessage>{error}</ErrorMessage>}  
-
-        <RoundedButton hoverBackgroundColor="#A4CCF5" color="black" fontWeight="bold" width="143px"
-          onClick={openCreateModal} 
-        >
-          Create Invoice
-        </RoundedButton>
-      </TitleRow>
-
+    <PageContainer>    
+      <PageHeader
+        title="Invoices"
+        error={error}
+        buttonText="New Invoice"
+        buttonColor="white" 
+        buttonHoverBg="#B0C4DE" 
+        buttonWidth="50"
+        onButtonClick={openCreateModal}  
+      /> 
+      
       <SearchInput type="text" value={filter}
         placeholder="Search by ID, customer, date, or item description"  
         onChange={(e) => setFilter(e.target.value)}
@@ -463,26 +481,15 @@ function InvoicePage() {
               a.CustomerId !== b.CustomerId ? a.CustomerId - b.CustomerId : a.Id - b.Id
             )
             .map(inv => (
-              <div key={inv.Id} style={{ 
-                marginBottom: '20px', 
-                marginTop: '10px', 
-                background: 'lightsteelblue',
-                padding: '15px',
-                borderRadius: '8px',
-                width: '100%'
-              }}>
+              <InvoiceCard key={inv.Id}>
                 <InvoiceHeader>
-                  {inv.CustomerPicture && (
-                    <Picture src={inv.CustomerPicture} alt="Customer" />
-                  )}
+                  {inv.CustomerPicture && <Picture src={inv.CustomerPicture} alt="Customer" />}
                   <TextContent>
-                    <span><strong>INVOICE ID:</strong> {inv.Id}</span> <br />
-                    <span><strong>CUSTOMER ID:</strong> {inv.CustomerId} | <strong>CUSTOMER NAME:</strong> {inv.CustomerName}</span> <br />
-                    <span><strong>DATE:</strong> {new Date(inv.Date).toLocaleDateString()}</span> <br />
-                    <span><strong>TAX RATE:</strong> {(inv.TaxRate * 100).toFixed(2)}%</span> <br />
-                    {inv.CreatedAt && (
-                      <span><strong>CREATED AT:</strong> {new Date(inv.CreatedAt).toLocaleString()}</span>
-                    )}
+                    <span><strong>INVOICE ID:</strong> {inv.Id}</span><br />
+                    <span><strong>CUSTOMER ID:</strong> {inv.CustomerId} | <strong>CUSTOMER NAME:</strong> {inv.CustomerName}</span><br />
+                    <span><strong>DATE:</strong> {new Date(inv.Date).toLocaleDateString()}</span><br />
+                    <span><strong>TAX RATE:</strong> {(inv.TaxRate * 100).toFixed(2)}%</span><br />
+                    {inv.CreatedAt && <span><strong>CREATED AT:</strong> {new Date(inv.CreatedAt).toLocaleString()}</span>}
                   </TextContent>
                 </InvoiceHeader>
 
@@ -499,10 +506,10 @@ function InvoicePage() {
                     <tbody>
                       {inv.items.map(item => (
                         <tr key={item.Id || item.Description}>
-                          <td>{item.Description || item.Description}</td>
-                          <td>{item.Quantity || item.Quantity}</td>
-                          <td>${(item.UnitPrice || item.UnitPrice).toFixed(2)}</td>
-                          <td>${((item.Quantity || item.Quantity) * (item.UnitPrice || item.UnitPrice)).toFixed(2)}</td>
+                          <td>{item.Description}</td>
+                          <td>{item.Quantity}</td>
+                          <td>${item.UnitPrice.toFixed(2)}</td>
+                          <td>${(item.Quantity * item.UnitPrice).toFixed(2)}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -515,7 +522,7 @@ function InvoicePage() {
                   <DeleteButton onClick={() => openDeleteModal(inv.Id)}>Delete</DeleteButton>
                   <UpdateButton onClick={() => openUpdateModal(inv)}>Update</UpdateButton>
                 </ButtonWrapper>
-              </div>
+              </InvoiceCard>
             ))}
         </Container>
       )}
@@ -525,7 +532,7 @@ function InvoicePage() {
           <Modal>  
             <TitleWrapper> 
               <Title>{isUpdating ? 'Update Invoice' : 'Create Invoice'}</Title>
-              <RoundedButton hoverBackgroundColor="#A4CCF5" color="black" height='30' fontWeight="bold" width="95px" 
+              <RoundedButton hoverBackgroundColor="#A4CCF5" color="black" height='30' fontWeight="bold" width="69px" 
                 onClick={() => setCreateModalOpen(false)}
               >
                 Close
@@ -589,7 +596,7 @@ function InvoicePage() {
                 <RoundedButton hoverBackgroundColor="orange" color="black" fontWeight="bold" width="81px" type="submit" >
                   {isUpdating ? 'Update' : 'Submit'}
                 </RoundedButton>
-                <RoundedButton hoverBackgroundColor="#A4CCF5" color="black" fontWeight="bold" width="95px" 
+                <RoundedButton hoverBackgroundColor="#A4CCF5" color="black" fontWeight="bold" width="69px" 
                   onClick={() => setCreateModalOpen(false)}
                 >
                   Close
@@ -606,12 +613,12 @@ function InvoicePage() {
             <Title>Confirm Deletion</Title>
             <div>Are you sure you want to delete invoice ID: {selectedInvoiceId}?</div>
             <ButtonRow style={{ marginTop: '20px' }}>
-              <RoundedButton hoverBackgroundColor="red" color="black" fontWeight="bold" width="81px"
+              <RoundedButton hoverBackgroundColor="red" color="black" fontWeight="bold" width="77px"
                 onClick={handleDelete}
               >
                 Delete
               </RoundedButton>
-              <RoundedButton hoverBackgroundColor="#A4CCF5" color="black" fontWeight="bold" width="95px" 
+              <RoundedButton hoverBackgroundColor="#A4CCF5" color="black" fontWeight="bold" width="69px"  
                 onClick={() => setDeleteModalOpen(false)}
               >
                 Close

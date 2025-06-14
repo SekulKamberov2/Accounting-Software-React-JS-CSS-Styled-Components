@@ -1,5 +1,8 @@
 import  { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { SearchInput } from '../components/ui/SearchInput';
+import { PageHeader } from '../components/ui/PageHeader';
+import { PageContainer, ActionsButtonRow, Cell, Items, TableRow, TableHeader, TableWrapper  } from '../components/ui/GridComponents'; 
 
 const Container = styled.div`
   display: flex;
@@ -15,17 +18,14 @@ const Container = styled.div`
 const ErrorMessage = styled.div`
   display: flex;
   justify-content: center;
+  align-items: center;
   color: red;
-  margin-top: 10px;
+  margin-top: 10px;  
+  width: 100%;
+  height: 60px;
+  padding: 10px;
 `;
-
-const SuccessMessage = styled.div`
-  display: flex;
-  justify-content: center;
-  color: green;
-  margin-top: 10px;
-  font-weight: bold;
-`;
+ 
 
 const RoundedButton = styled.button`
   padding: 5px 8px;
@@ -60,7 +60,7 @@ const TitleRow = styled.div`
   margin-bottom: 20px;
 `;
 
-const SearchInput = styled.input`
+const SearchInput2 = styled.input`
   padding: 10px;
   width: 88%;
   margin-bottom: 20px;
@@ -138,7 +138,7 @@ const ModalButtonRow = styled.div`
   margin-top: 20px;
 `;
  
-const ActionsButtonRow = styled.div`
+const ActionsButtonRow2 = styled.div`
   display: flex;
   justify-content: flex-end;
   gap: 10px;
@@ -346,56 +346,56 @@ const handleCreate = async (e) => {
       </Modal>
     </ModalBackdrop>
   ); 
-  return (
-    <>
-      <Container>
-        <TitleRow>
-          <Title>All Journal Entries</Title>
-          <RoundedButton width="107px" fontWeight="600" hoverBackgroundColor="#C09BC2"
-            onClick={() => {
-              setFormData({ date: '', description: '', entries: [] });
-              setNewEntryModal(true);
-              setError('');
-              setSuccess(false);
-            }}
-          >
-            New Entry
-          </RoundedButton>
-        </TitleRow>
-
-        <SearchInput type="text" placeholder="Search by date (YYYY-MM-DD)..."
-          value={filter} onChange={e => setFilter(e.target.value)}
+  return ( 
+      <PageContainer> 
+        <PageHeader
+          title="All Journal Entries"
+          error={error}
+          buttonText="New Entry"
+          buttonColor="white" 
+          buttonHoverBg="#C09BC2" 
+          buttonWidth="107px"
+          onButtonClick={() => {
+            setFormData({ date: '', description: '', entries: [] });
+            setNewEntryModal(true);
+            setError('');
+            setSuccess(false);
+          }}  
+        />   
+        <SearchInput
+          type="text"
+          placeholder="Search by date (YYYY-MM-DD)..."
+          value={filter}
+          onChange={e => setFilter(e.target.value)}
         />
-
+        {error && <ErrorMessage>{error}</ErrorMessage>}  
          {filteredEntries.length === 0 ? 
          <NoResults>No matching entries found.</NoResults>
          : 
-          <Table>
-            <thead>
-              <tr>
-                <Th>ID</Th>
-                <Th>Date</Th>
-                <Th>Description</Th>
-                <Th style={{ textAlign: 'center' }}>Lines</Th>
-                <Th style={{ textAlign: 'center' }}>Actions</Th>
-              </tr>
-            </thead>
+          <TableWrapper>
+            <TableHeader backgroundColor="#C09BC2">
+                <Cell>ID</Cell>
+                <Cell>Date</Cell>
+                <Cell>Description</Cell>
+                <Cell style={{ textAlign: 'center' }}>Lines</Cell>
+                <Cell style={{ textAlign: 'center' }}>Actions</Cell> 
+            </TableHeader>
             <tbody>
               {entries
                 .filter(entry => entry.date.includes(filter))
                 .map(entry => (
-                  <TR key={entry.id}>
-                    <Td>{entry.id}</Td>
-                    <Td>{new Date(entry.date).toISOString().split('T')[0]}</Td>
-                    <Td>{entry.description}</Td>
-                    <Td>
+                  <TableRow key={entry.id} backgroundColor="#dbbedd"> 
+                    <Cell>{entry.id}</Cell>
+                    <Cell>{new Date(entry.date).toISOString().split('T')[0]}</Cell>
+                    <Cell>{entry.description}</Cell>
+                    <Cell>
                       <ul>
                         {entry.lines?.map((line, index) => (
                           <li key={index}> {line.accountName}: Debit {line.debit}, Credit {line.credit} </li>
                         ))}
                       </ul>
-                    </Td>
-                    <Td>
+                    </Cell>
+                    <Cell>
                       <ActionsButtonRow>
                         <RoundedButton width="75px" hoverBackgroundColor="orange"
                           onClick={() => {
@@ -425,21 +425,19 @@ const handleCreate = async (e) => {
                           Delete
                         </RoundedButton>
                       </ActionsButtonRow>
-                    </Td>
-                  </TR>
+                    </Cell>
+                  </TableRow>
                 ))}
             </tbody>
-          </Table>
+          </TableWrapper>
         }
 
         {updateEntry && renderModal(updateEntry)}
         {deleteEntry && renderDeleteModal(deleteEntry)}
         {newEntryModal && renderModal({}, true)}
-      </Container>
+      </PageContainer>
 
-      {error && <ErrorMessage>{error}</ErrorMessage>}
-      {success && <SuccessMessage>Successful</SuccessMessage>}
-    </>
+      
   );
 };
 

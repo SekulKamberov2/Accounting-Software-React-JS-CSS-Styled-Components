@@ -1,14 +1,16 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
- 
+ import { SearchInput } from '../components/ui/SearchInput';
+import { PageHeader } from '../components/ui/PageHeader'; 
+import { PageContainer, ActionsButtonRow, Cell, Items, TableRow, TableHeader, TableWrapper  } from '../components/ui/GridComponents'; 
+
+
 const Container = styled.div`
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  min-width: 300px;
-  width: 90%;
-  margin: 40px auto;
-  padding: 20px;
+  min-width: 300px; 
+  width: 100%;  
   box-sizing: border-box;
 `; 
 
@@ -51,7 +53,7 @@ const TitleRow = styled.div`
   margin-bottom: 20px;
 `;
 
-const SearchInput = styled.input`
+const SearchInput2 = styled.input`
   padding: 10px;
   width: 77%;
   margin-bottom: 20px;
@@ -92,6 +94,7 @@ const ModalBackdrop = styled.div`
   align-items: center;
   z-index: 999;
 `;
+
 const Modal = styled.div`
   background: white;
   border-radius: 10px;
@@ -121,6 +124,13 @@ const ModalButtonRow = styled.div`
   gap: 10px;
   margin-top: 20px;
 `; 
+
+ const ItemRow = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding: 5px 0;  
+`;
+ 
 
 const RecurringInvoices = () => { 
   const [invoices, setInvoices] = useState([]);
@@ -357,90 +367,93 @@ const RecurringInvoices = () => {
   );
 
   return (
-    <>
-      <TitleRow>
-        <Title>Recurring Invoices</Title>
-        <RoundedButton hoverBackgroundColor="#A4CCF5" color="black"
-          onClick={() => {
-            resetForm();
-            setNewInvoiceModal(true);
-          }}
-          fontWeight="bold"
-          width="210px"
-        >
-          New Recurring Invoice
-        </RoundedButton>
-      </TitleRow>
+    <PageContainer> 
+      <PageHeader
+        title="Recurring Invoices"
+        error={error}
+        buttonText="New Invoice"
+        buttonColor="white" 
+        buttonHoverBg="#A4CCF5" 
+        buttonWidth="210"
+        onButtonClick={() => {
+          resetForm();
+          setNewInvoiceModal(true);
+        }}  
+      /> 
 
-      <SearchInput type="text" placeholder="Search by invoice ID, customer ID or interval" value={filter}
+      <SearchInput
+        type="text"
+        placeholder="Search by invoice ID, customer ID or interval"
+        value={filter}
         onChange={e => setFilter(e.target.value)}
       />
-
       <Container>
         {filteredInvoices.length === 0 && <NoResults>No recurring invoices found.</NoResults>}
 
         {filteredInvoices.length > 0 && (
-          <Table>
-            <thead>
-              <tr>
-                <Th>ID</Th>
-                <Th>Customer ID</Th>
-                <Th>Interval</Th>
-                <Th>Start Date</Th>
-                <Th>Items</Th>
-                <Th>Actions</Th>
-              </tr>
-            </thead>
+          <TableWrapper>
+            <TableHeader backgroundColor="#a4ccf5"> 
+                <Cell width="10px">ID</Cell>
+                <Cell>Customer ID</Cell>
+                <Cell>Interval</Cell>
+                <Cell>Start Date</Cell>
+                <Cell>Items</Cell>
+                <Cell>Actions</Cell> 
+            </TableHeader>
             <tbody>
               {filteredInvoices.map(inv => (
-                <TR key={inv.id}>
-                  <Td>{inv.id}</Td>
-                  <Td>{inv.customerId}</Td>
-                  <Td>{inv.interval}</Td>
-                  <Td> {inv.startDate && !isNaN(new Date(inv.startDate)) ? new Date(inv.startDate).toISOString().slice(0, 10) : 'Invalid date'}</Td>
-                  <Td>
+                <TableRow key={inv.id} backgroundColor="#a4ccf5">
+                  <Cell  >{inv.id}</Cell>
+                  <Cell>{inv.customerId}</Cell>
+                  <Cell>{inv.interval}</Cell>
+                  <Cell> {inv.startDate && !isNaN(new Date(inv.startDate)) ? new Date(inv.startDate).toISOString().slice(0, 10) : 'Invalid date'}</Cell>
+                  <Items>
                     {inv.items.map((item, i) => (
-                      <div key={i}>
-                        {item.description} — Qty: {item.quantity}, Price: ${item.unitPrice.toFixed(2)}
-                      </div>
+                      <ItemRow key={i}>
+                        <strong>{item.description}</strong>
+                        <span>Qty: {item.quantity}</span>
+                        <span>Price: ${item.unitPrice.toFixed(2)}</span>
+                      </ItemRow>
                     ))}
-                  </Td>
-                  <Td>
-                    <RoundedButton hoverBackgroundColor="orange" color="black"
-                      onClick={() => {
-                        setUpdateInvoice(inv);
-                        setFormData({
-                          customerId: inv.customerId,
-                          interval: inv.interval,
-                          startDate: inv.startDate,
-                          items: inv.items.map(it => ({
-                            description: it.description,
-                            quantity: it.quantity,
-                            unitPrice: it.unitPrice
-                          }))
-                        });
-                      }}
-                    >
-                      Update
-                    </RoundedButton>
-                    <RoundedButton hoverBackgroundColor="red" color="black"
-                      onClick={() => setDeleteInvoice(inv)}
-                      style={{ marginLeft: '5px' }}
-                    >
-                      Delete
-                    </RoundedButton>
-                  </Td>
-                </TR>
+                  </Items>
+                  <Cell>
+                    <ActionsButtonRow> 
+                      <RoundedButton hoverBackgroundColor="orange" color="black"
+                        onClick={() => {
+                          setUpdateInvoice(inv);
+                          setFormData({
+                            customerId: inv.customerId,
+                            interval: inv.interval,
+                            startDate: inv.startDate,
+                            items: inv.items.map(it => ({
+                              description: it.description,
+                              quantity: it.quantity,
+                              unitPrice: it.unitPrice
+                            }))
+                          });
+                        }}
+                      >
+                        Update
+                      </RoundedButton>
+                      <RoundedButton hoverBackgroundColor="red" color="black"
+                        onClick={() => setDeleteInvoice(inv)}
+                        style={{ marginLeft: '5px' }}
+                      >
+                        Delete
+                      </RoundedButton>
+                    </ActionsButtonRow>
+                  </Cell>
+                </TableRow>
               ))}
             </tbody> 
-          </Table>
+          </TableWrapper>
         )}
       </Container>
 
       {newInvoiceModal && renderModal(null, true)}
       {updateInvoice && renderModal(updateInvoice, false)}
       {deleteInvoice && renderDeleteModal(deleteInvoice)}
-    </>
+    </PageContainer>
   );
 };
 

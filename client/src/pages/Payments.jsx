@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { PageContainer, ActionsButtonRow, Cell, Items, TableRow, TableHeader, TableWrapper  } from '../components/ui/GridComponents'; 
+import { PageHeader } from '../components/ui/PageHeader';
+import { SearchInput } from '../components/ui/SearchInput';
 
 const Container = styled.div`
   padding: 2rem;
@@ -58,7 +61,7 @@ const Label = styled.label`
   font-size: 0.9rem;
 `;
 
-const SearchInput = styled.input`
+const SearchInput2 = styled.input`
   padding: 10px;
   width: 97.5%;
   min-width: 481px;
@@ -224,21 +227,23 @@ const Payments = () => {
   );
 
   return (
-    <Container>
-      <TitleRow>
-        <Title>Payments</Title>
-        <RoundedButton width="137px" fontWeight="600" hoverBackgroundColor="#F78745"
-          onClick={() => {
-            setFormData({ invoice_id: '', amount: '', date: '', method: 'cash' });
-            setEditPayment(null);
-            setIsModalOpen(true);
-            setError('');
-            setSuccess('');
-          }}
-        >
-          New Payment
-        </RoundedButton>
-      </TitleRow>
+    <PageContainer> 
+
+      <PageHeader
+        title="Payments"
+        error={error}
+        buttonText="New Payment"
+        buttonColor="white" 
+        buttonHoverBg="#F78745" 
+        buttonWidth="137px"
+        onButtonClick={() =>{
+          setFormData({ invoice_id: '', amount: '', date: '', method: 'cash' });
+          setEditPayment(null);
+          setIsModalOpen(true);
+          setError('');
+          setSuccess('');
+        }}  
+      />  
 
       <ModalOverlay visible={isModalOpen}>
         <ModalContent> 
@@ -302,32 +307,37 @@ const Payments = () => {
         </ModalOverlay>
       )} 
       
-      <Label>
+   {/*   <Label>
         <SearchInput type="text" placeholder="Search by Invoice ID, Method, or Date" value={searchTerm}
           onChange={e => setSearchTerm(e.target.value)}
         />
-      </Label>
+      </Label> */} 
 
-      <Table>
-        <thead>
-          <tr>
-            <Th>ID</Th>
-            <Th>Invoice ID</Th>
-            <Th>Amount</Th>
-            <Th>Date</Th>
-            <Th>Method</Th>
-            <Th>Actions</Th>
-          </tr>
-        </thead>
+      <SearchInput
+        type="text"
+        placeholder="Search by Invoice ID, Method, or Date"
+        value={searchTerm}
+        onChange={e => setSearchTerm(e.target.value)}
+      /> 
+
+      <TableWrapper>
+        <TableHeader backgroundColor="#f78745"> 
+            <Cell>ID</Cell>
+            <Cell>Invoice ID</Cell>
+            <Cell>Amount</Cell>
+            <Cell>Date</Cell>
+            <Cell>Method</Cell>
+            <Cell>Actions</Cell> 
+        </TableHeader>
         <tbody>
-          {filteredPayments.map(p => (
-            <TR key={p.Id}>
-              <Td>{p.Id}</Td>
-              <Td>{p.InvoiceId}</Td>
-              <Td>{p.Amount}</Td>
-              <Td>{new Date(p.Date).toISOString().split('T')[0]}</Td>
-              <Td>{p.Method}</Td>
-              <Td>
+          {filteredPayments.map(p => ( 
+            <TableRow key={p.Id} backgroundColor="#ff8c49">
+              <Cell>{p.Id}</Cell>
+              <Cell>{p.InvoiceId}</Cell>
+              <Cell>{p.Amount}</Cell>
+              <Cell>{new Date(p.Date).toISOString().split('T')[0]}</Cell>
+              <Cell>{p.Method}</Cell>
+              <Cell>
                 <RoundedButton width="75px" hoverBackgroundColor="orange"
                   onClick={() => {
                     setEditPayment(p);
@@ -349,12 +359,12 @@ const Payments = () => {
                 >
                   Delete
                 </RoundedButton>
-              </Td>
-            </TR>
+              </Cell>
+            </TableRow>
           ))}
         </tbody>
-      </Table>
-    </Container>
+      </TableWrapper>
+    </PageContainer>
   );
 };
 

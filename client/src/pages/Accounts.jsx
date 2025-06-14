@@ -1,6 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import styled from 'styled-components';
+import { useEffect, useState } from 'react';
 
+import styled from 'styled-components';
+import { SearchInput } from '../components/ui/SearchInput';
+import { PageHeader } from '../components/ui/PageHeader';
+import { PageContainer, ActionsButtonRow, Cell, Items, TableRow, TableHeader, TableWrapper  } from '../components/ui/GridComponents'; 
+
+  
 const Container = styled.div`
   display: flex;
   flex-wrap: wrap;
@@ -12,13 +17,15 @@ const Container = styled.div`
   box-sizing: border-box;
 `;
 
+ 
+
 const TR = styled.tr`
   &:hover {
     background-color: #53B87D;
   }
 `;
 
-const RoundedButton = styled.button`
+const RoundedButton = styled.button` 
   padding: 5px 8px;
   background-color: ${({ backgroundColor }) => backgroundColor || 'transparent'};
   color: ${({ color }) => color || 'black'};
@@ -51,13 +58,15 @@ const TitleRow = styled.div`
   margin-bottom: 20px;
 `;
 
-const SearchInput = styled.input`
+const SearchInput2 = styled.input`
   padding: 10px;
   width: 78%;
   margin-bottom: 20px;
   border-radius: 6px;
   border: 1px solid #ccc;
 `;
+
+ 
 
 const Table = styled.table`
   width: 80%;
@@ -135,13 +144,7 @@ const ModalButtonRow = styled.div`
   gap: 10px;
   margin-top: 20px;
 `;
-
-const ActionsButtonRow = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-top: 20px; 
-`;
+ 
 
 const ModalButton = styled.button`
   padding: 8px 16px;
@@ -160,9 +163,10 @@ const ModalButton = styled.button`
   }
 `; 
 
-const AllAccounts = () => {
+const Accounts = () => {
   const [accounts, setAccounts] = useState([]);
   const [filter, setFilter] = useState('');
+  const [error, setError] = useState('');
   const [filteredAccounts, setFilteredAccounts] = useState([]);
   const [updateAccount, setUpdateAccount] = useState(null);
   const [deleteAccount, setDeleteAccount] = useState(null);
@@ -200,11 +204,11 @@ const AllAccounts = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
-      if (!response.ok) throw new Error('Update failed');
+      if (!response.ok) setError('Update failed');
       await fetchAccounts();
       setUpdateAccount(null);
     } catch (err) {
-      seetError(err.message);
+      setError(err.message);
     }
   };
 
@@ -213,7 +217,7 @@ const AllAccounts = () => {
       const response = await fetch(`http://localhost:3010/api/accounts/${id}`, {
         method: 'DELETE',
       });
-      if (!response.ok) throw new Error('Delete failed');
+      if (!response.ok) setError('Delete failed');
       await fetchAccounts();
       setDeleteAccount(null);
     } catch (err) {
@@ -229,7 +233,7 @@ const AllAccounts = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
-      if (!response.ok) throw new Error('Create failed');
+      if (!response.ok) setError('Create failed');
       await fetchAccounts();
       setNewAccountModal(false);
       setFormData({ Name: '', Type: '', Code: '' });
@@ -291,16 +295,19 @@ const AllAccounts = () => {
   );
 
   return (
-    <Container>
-      <TitleRow>
-        <Title>All Accounts</Title>
-       
-        <RoundedButton width="131px" fontWeight="600" hoverBackgroundColor="#53B87D" onClick={() => {
+    <PageContainer>
+      <PageHeader
+        title="All Accounts"
+        error={error}
+        buttonText="New Account"
+        buttonColor="white" 
+        buttonHoverBg="#53B87D" 
+        buttonWidth="55"
+        onButtonClick={() => {
           setFormData({ Name: '', Type: '', Code: '' });
           setNewAccountModal(true);
-        }}>New Account</RoundedButton>
-      </TitleRow>
-
+        }}  
+      />   
       <SearchInput
         type="text"
         placeholder="Search by name, code, or type..."
@@ -311,48 +318,52 @@ const AllAccounts = () => {
       {filteredAccounts.length === 0 ? (
         <NoResults>No matching accounts found.</NoResults>
       ) : (
-        <Table>
-          <thead>
-            <tr>
-              <Th>ID</Th>
-              <Th>Name</Th>
-              <Th>Type</Th>
-              <Th>Code</Th>
-              <Th style={{textAlign: 'center'}}>Actions</Th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredAccounts.map(account => (
-              <TR key={account.Id}>
-                <Td>{account.Id}</Td>
-                <Td>{account.Name}</Td>
-                <Td>{account.Type}</Td>
-                <Td>{account.Code}</Td>
-                <Td>
-                  <ActionsButtonRow> 
-                    <RoundedButton width="75px" 
-                      hoverBackgroundColor="#53B87D" 
-                      onClick={() => { setFormData({ Name: account.Name, Type: account.Type, Code: account.Code }); setUpdateAccount(account);  }}  >
-                      Update
-                    </RoundedButton>
-                    <RoundedButton width="75px" 
-                      hoverBackgroundColor="#E74C3C" 
-                      onClick={() => setDeleteAccount(account)}>
-                      Delete
-                    </RoundedButton>
+        <TableWrapper>
+          <TableHeader backgroundColor="#53B87D">
+            <Cell>ID</Cell>
+            <Cell>Name</Cell>
+            <Cell>Type</Cell>
+            <Cell>Code</Cell>
+            <Cell>Actions</Cell>
+          </TableHeader>
+
+          {filteredAccounts.map(account => (
+            <TableRow key={account.Id} backgroundColor="#75ffac">
+              <Cell>{account.Id}</Cell>
+              <Cell>{account.Name}</Cell>
+              <Cell>{account.Type}</Cell>
+              <Cell>{account.Code}</Cell>
+              <Cell>
+                <ActionsButtonRow>
+                  <RoundedButton
+                    width="75px"
+                    hoverBackgroundColor="#53B87D"
+                    onClick={() => {
+                      setFormData({ Name: account.Name, Type: account.Type, Code: account.Code });
+                      setUpdateAccount(account);
+                    }}
+                  >
+                    Update
+                  </RoundedButton>
+                  <RoundedButton
+                    width="75px"
+                    hoverBackgroundColor="#E74C3C"
+                    onClick={() => setDeleteAccount(account)}
+                  >
+                    Delete
+                  </RoundedButton>
                 </ActionsButtonRow>
-                </Td>
-              </TR>
-            ))}
-          </tbody>
-        </Table>
+              </Cell>
+            </TableRow>
+          ))}
+        </TableWrapper> 
       )}
 
       {updateAccount && renderModal(updateAccount)}
       {deleteAccount && renderDeleteModal(deleteAccount)}
       {newAccountModal && renderModal({}, true)}
-    </Container>
+    </PageContainer>
   );
 };
 
-export default AllAccounts;
+export default Accounts;
