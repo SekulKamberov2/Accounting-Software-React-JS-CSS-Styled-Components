@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { setCredentials } from '../redux/features/auth/authSlice';   
-import { useNavigate } from 'react-router-dom';
+import { setCredentials } from '../redux/features/auth/authSlice';
+import { useNavigate, Link } from 'react-router-dom';
 import styled from 'styled-components';
- 
+
+// Styled Components
 const Container = styled.div`
   display: flex;
   justify-content: center;
@@ -81,6 +82,18 @@ const ErrorMessage = styled.p`
   font-size: 14px;
 `;
 
+const StyledLink = styled(Link)`
+  display: inline-block;
+  margin-top: 15px;
+  font-size: 14px;
+  color: #4e9f3d;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+`;
+ 
 const SignIn = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -89,55 +102,55 @@ const SignIn = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleChange = (e) =>
+    setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-   
+
     try {
-        const response = await fetch('http://localhost:3010/api/auth/login', {
+      const response = await fetch('http://localhost:3010/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
-     
+
       if (!response.ok) {
         const err = await response.json();
         throw new Error(err.message || 'Login failed');
       }
 
-      const data = await response.json();  
-   
-      if (!data.token || !isValidJwt(data.token)) throw new Error('Invalid token received');  
+      const data = await response.json();
+
+      if (!data.token || !isValidJwt(data.token)) throw new Error('Invalid token received');
+
       const decodedToken = decodeJwt(data.token);
-         console.log(data);
       const user = {
         id: data.user.id,
         name: data.user.name,
-        email: data.user.email, 
-        roles: data.user.role,  
+        email: data.user.email,
+        roles: data.user.role,
         picture: data.user.picture,
         dateCreated: new Date(decodedToken.exp * 1000).toLocaleString(),
       };
-        console.log(data.user);
+
       dispatch(setCredentials({ token: data.token, user }));
- 
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(user));
- 
+
       navigate('/profile');
     } catch (err) {
-        setError(err.message || 'An error occurred during sign-in.');
+      setError(err.message || 'An error occurred during sign-in.');
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
   };
- 
+
   const isValidJwt = (token) => {
     const parts = token.split('.');
-    return parts.length === 3;  
+    return parts.length === 3;
   };
 
   const decodeJwt = (token) => {
@@ -147,60 +160,65 @@ const SignIn = () => {
       const jsonPayload = decodeURIComponent(
         atob(base64)
           .split('')
-          .map(function (c) {
-            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-          })
+          .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
           .join('')
       );
       return JSON.parse(jsonPayload);
     } catch (error) {
-        console.error('Error decoding JWT:', error);
+      console.error('Error decoding JWT:', error);
       return null;
     }
   };
- 
+
   return (
     <Container>
       <FormWrapper>
         <Title>Sign In</Title> 
-        <div style={{ display: 'flex', gap: '10px', fontSize: 14  }}>
-            <div>john@example.com</div>
+       
+          <div style={{ display: 'flex', gap: '10px', fontSize: 14 }}>
+            <div>seanpenn@gmail.com</div>
             <div>StrongPass123!</div>
           </div>
-          <div style={{ display: 'flex', gap: '10px', fontSize: 14, marginBottom: 11 }}>
-            <div>john@example.com</div>
-            <div>StrongPass123!</div>
-          </div> 
-          {error && <ErrorMessage>{error}</ErrorMessage>} 
-          {loading && <p>Signing in...</p>} 
-          <form onSubmit={handleSubmit}>
-            <div> 
-              <Label htmlFor="email">Email:</Label>
-              <Input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                required
-              />
-            </div>
+        <div style={{ display: 'flex', gap: '10px', fontSize: 14, marginBottom: 11 }} >
+          <div>bradpitt@gmail.com</div>
+          <div>Qwerty123!@#</div>
+        </div>
 
-            <div>
-              <Label htmlFor="password">Password:</Label>
-              <Input
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                required
-              />
-            </div>
+        {error && <ErrorMessage>{error}</ErrorMessage>}
+        {loading && <p>Signing in...</p>}
 
-            <Button type="submit" disabled={loading}>
-              Sign In
-            </Button>
-          </form> 
-      </FormWrapper> 
+        <form onSubmit={handleSubmit}>
+          <div>
+            <Label htmlFor="email">Email:</Label>
+            <Input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="password">Password:</Label>
+            <Input
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          <Button type="submit" disabled={loading}>
+            Sign In
+          </Button>
+        </form>
+
+        <StyledLink to="/signup">
+          Don't have an account? Sign up here.
+        </StyledLink>
+      </FormWrapper>
     </Container>
   );
 };

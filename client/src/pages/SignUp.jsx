@@ -1,89 +1,106 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; 
-
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import ErrorNotification from '../components/ErrorNotification';
- 
-const Form = styled.form`
+
+// Styled Components
+const Container = styled.div`
   display: flex;
-  flex-direction: column;
-  width: 300px; 
-  padding: 2rem;
-  border: 1px solid #ddd;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f4f4f4;
+`;
+
+const FormWrapper = styled.div`
+  background: white;
+  padding: 20px;
   border-radius: 8px;
-  background-color: #fafafa;
-`;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 320px;
+  text-align: center;
 
-const Input = styled.input`
-  padding: 10px;
-  margin-bottom: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-`;
-
-const Button = styled.button`
-  padding: 10px;
-  background-color: #007bff;
-  border: none;
-  color: white;
-  font-weight: bold;
-  border-radius: 4px;
-  cursor: pointer;
-
-  &:hover {
-    background-color: #0056b3;
+  @media (max-width: 600px) {
+    max-width: 90%;
   }
 `;
 
-const ProfileDetailsHeader = styled.div`
-  font-size: 31px;
+const Title = styled.h2`
+  margin-bottom: 20px;
+  font-size: 24px;
   color: #333;
-  margin-bottom: 28px;
-  text-align: center;
-  font-weight: 700; 
 `;
 
-const ProfileContainer = styled.div` 
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  //padding: 21px; 
-  background-color: ${({ theme }) => theme.background || '#f9f9f9'};
-  color: ${({ theme }) => theme.text || '#333'};
- 
-  margin-top: 7%;
-  height: 30vh;  
-  width: 30vw;  
+const Label = styled.label`
+  display: block;
+  margin-bottom: 8px;
+  text-align: left;
+  font-size: 14px;
+  color: #333;
 `;
 
-const Box = styled.div`
+const Input = styled.input`
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  font-size: 16px;
+  box-sizing: border-box;
+
+  &:focus {
+    border-color: #4e9f3d;
+    outline: none;
+  }
+`;
+
+const Button = styled.button`
+  width: 100%;
+  padding: 12px;
+  background-color: #4e9f3d;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+
+  &:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+
+  &:hover {
+    background-color: #3b8d2f;
+  }
+`;
+
+const SuccessMessage = styled.div`
+  background-color: #e6ffed;
   padding: 20px;
-  background-color: #f0f0f0;
   border-radius: 8px;
+  text-align: left;
+  color: #2e7d32;
+  font-size: 16px;
 `;
 
-const ProfileInfo = styled.p`
-  font-size: 21px;
-  color: #555;
-  margin: 5px 0;
-`;
-const Field = styled.span` 
-  color: #555; 
-  font-weight: 650;
-  padding-right: 7px;
+const Field = styled.span`
+  font-weight: 600;
 `;
 
 const SignUp = () => {
   const navigate = useNavigate();
   const [userData, setUserData] = useState({
-    UserName: '',
-    Email: '',
-    Password: '',
-    PhoneNumber: '',
+    name: '',
+    email: '',
+    password: '', 
+    role: '',
+    picture: '',
   });
+
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
- 
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setUserData((prevData) => ({ ...prevData, [name]: value }));
@@ -93,8 +110,8 @@ const SignUp = () => {
     e.preventDefault();
 
     try {
-      const token = localStorage.getItem('token');  
-        const response = await fetch('http://localhost:5003/api/HR/signup', {
+      const token = localStorage.getItem('token');
+      const response = await fetch('http://localhost:3010/api/users', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -103,73 +120,66 @@ const SignUp = () => {
         body: JSON.stringify(userData),
       });
 
-      const data = await response.json();
+      const result = await response.json();
+
       if (response.ok) {
-         setData(data.data);
-         navigate('/users');
-      } else { 
-        setError(data.error || 'Sign up failed');
+        setData(result.data);
+      } else {
+        setError(result.error || 'Sign up failed');
       }
     } catch (err) {
-      setError(err.message );
+      setError(err.message || 'Something went wrong');
     }
   };
 
   return (
-    <> 
-     
-    {!data ?   
-   
-    <ProfileContainer> 
-      <Form onSubmit={handleSubmit}>
-          <h3>Qwerty1!@%</h3>
-        {error && <ErrorNotification message={error} />}
-        <Input
-          type="text"
-          name="UserName"
-          value={userData.UserName}
-          onChange={handleChange}
-          placeholder="Username"
-          required
-        />
-        <Input
-          type="email"
-          name="Email"
-          value={userData.Email}
-          onChange={handleChange}
-          placeholder="Email"
-          required
-        />
-        <Input
-          type="password"
-          name="Password"
-          value={userData.Password}
-          onChange={handleChange}
-          placeholder="Password"
-          required
-        />
-        <Input
-          type="text"
-          name="PhoneNumber"
-          value={userData.PhoneNumber}
-          onChange={handleChange}
-          placeholder="Phone Number"
-          required
-        />
-        <Button type="submit">Sign Up</Button>
-      </Form>
-       </ProfileContainer>
-      :   
-      <ProfileContainer> 
-        <ProfileDetailsHeader>Employee Created</ProfileDetailsHeader>
-        <ProfileInfo><Field>ID:</Field>{ data.Id}</ProfileInfo>
-        <ProfileInfo><Field>User:</Field>{ data.UserName}</ProfileInfo>
-        <ProfileInfo><Field>Email:</Field>{ data.Email}</ProfileInfo> 
-        <ProfileInfo><Field>Phone Number:</Field>{ data.PhoneNumber}</ProfileInfo>  
-        </ProfileContainer>
-        
-    }
-  </>
+    <Container>
+      <FormWrapper>
+        {!data ? (
+          <>
+            <Title>Sign Up</Title>
+            {error && <ErrorNotification message={error} />}
+            <form onSubmit={handleSubmit}>
+              <Label htmlFor="UserName">Username:</Label>
+              <Input type="text" required name="name" value={userData.name}
+                onChange={handleChange} 
+              />
+
+              <Label htmlFor="Email">Email:</Label>
+              <Input type="email" required name="email" value={userData.email}
+                onChange={handleChange} 
+              />
+
+              <Label htmlFor="Password">Password:</Label>
+              <Input  type="password" name="password" value={userData.password}  required
+                onChange={handleChange} 
+              /> 
+
+              <Label htmlFor="Role">Role:</Label>
+              <Input  type="text" name="role" value={userData.role} required
+              onChange={handleChange} 
+              /> 
+
+              <Label htmlFor="Picture">Picture (URL):</Label>
+              <Input type="text" name="picture" value={userData.picture}
+                onChange={handleChange} placeholder="https://example.com/photo.jpg"
+              />
+
+              <Button type="submit">Sign Up</Button>
+            </form>
+          </>
+        ) : (
+          <SuccessMessage>
+            <h3>Employee Created!</h3>
+            <p><Field>ID:</Field> {data.Id}</p>
+            <p><Field>Username:</Field> {data.name}</p>
+            <p><Field>Email:</Field> {data.email}</p> 
+            <p><Field>Picture:</Field> {data.picture}</p>
+            <p><Field>Role:</Field> {data.role}</p>
+          </SuccessMessage>
+        )}
+      </FormWrapper>
+    </Container>
   );
 };
 

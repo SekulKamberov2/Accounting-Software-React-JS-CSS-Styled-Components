@@ -240,7 +240,7 @@ const ProfilePage = () => {
   const [editingInvoiceId, setEditingInvoiceId] = useState(null);
 
   const user = useSelector((state) => state.auth.user);
-
+console.log(user);
   const ACCOUNTANT = user?.roles === "accountant"; 
   const ADMIN = user?.roles === "admin"; 
   const navigate = useNavigate();    
@@ -252,95 +252,8 @@ const ProfilePage = () => {
     items: [
       { description: '', quantity: '', unit_price: '' }
     ],
-  });
-/*
-const handleUpdateInvoice = (invoice) => {
- 
-  setModalOpen(false);
-  setIsModalOpen(false);  
+  }); 
 
- 
-  setNewInvoice({
-    customer_id: invoice.CustomerId,
-    date: invoice.Date?.substring(0, invoice.Date.indexOf('T')),  
-    tax_rate: invoice.TaxRate,
-    items: invoice.items.map(item => ({
-      description: item.Description,
-      quantity: item.Quantity,
-      unit_price: item.UnitPrice
-    }))
-  });
-
-  setEditingInvoiceId(invoice.Id);
-  setIsUpdating(true);
-  setCreateModalOpen(true);
-};
-  */
- /*
-  const handleInvoiceChange = (e) => {
-    const { name, value } = e.target;
-    setNewInvoice(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleItemChange = (index, e) => {
-    const { name, value } = e.target;
-    setNewInvoice(prev => {
-      const items = [...prev.items];
-      items[index] = { ...items[index], [name]: value };
-      return { ...prev, items };
-    });
-  };
-
-  const addItem = () => {
-    setNewInvoice(prev => ({
-      ...prev,
-      items: [...prev.items, { description: '', quantity: '', unit_price: '' }]
-    }));
-  };
-
-  const removeItem = (index) => {
-    setNewInvoice(prev => ({
-      ...prev,
-      items: prev.items.filter((_, i) => i !== index)
-    }));
-  };
- 
-  const handleSubmit = async (e) => {
-  e.preventDefault();
-
-  const url = isUpdating
-    ? `http://localhost:3010/api/invoices/${editingInvoiceId}`
-    : 'http://localhost:3010/api/invoices';
-
-  const method = isUpdating ? 'PUT' : 'POST';
-
-  try {
-    const response = await fetch(url, {
-      method,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(newInvoice),
-    });
-
-    if (!response.ok) 
-      setError(isUpdating ? 'Failed to update invoice' : 'Failed to create invoice');
-
-    setCreateModalOpen(false);
-    setIsUpdating(false);
-    setEditingInvoiceId(null);
-    setNewInvoice({
-      customer_id: '',
-      date: '',
-      tax_rate: '',
-      items: [{ description: '', quantity: '', unit_price: '' }],
-    });
-
-    alert(isUpdating ? 'Invoice updated successfully!' : 'Invoice created successfully!'); //TO DO: IMPLEMENT NOTIDIER FOR MY APP
-    handleShowInvoices();  
-  } catch (err) {
-    setError(err.message || 'An unexpected error occurred');
-  }
-};
-*/
   const handleDeleteInvoice = async (invoiceId) => {
     if (!window.confirm('Are you sure you want to delete this invoice?')) return;
 
@@ -410,7 +323,7 @@ const handleUpdateInvoice = (invoice) => {
     <PageContainer>  
       {user?.id > 0 ?  
         <>  
-          <ProfileHeader>{ user.roles ? "Accountant" : user.roles }</ProfileHeader>   
+          <ProfileHeader>{ ACCOUNTANT ? "Accountant" : ADMIN ? "Admin" : "User" }</ProfileHeader>   
           <UserCard>  
             <span><strong>ID: </strong> { user.id}</span> 
             <span>{ user.name}</span>  
@@ -423,11 +336,10 @@ const handleUpdateInvoice = (invoice) => {
           </UserCard> 
           {user.roles == 'accountant' && 
           <>  
-             <Payments>
-                  {(ACCOUNTANT || ADMIN) &&
+             <Payments> 
                 <RoundedButton width="91px" hoverBackgroundColor="#A4CCF5" 
                   onClick={() => navigate('invoices-page')}>Invoices</RoundedButton>
-              } 
+              
               <RoundedButton width="175px" hoverBackgroundColor="#A4CCF5" onClick={() => navigate('recurring-invoices')}>Recurring Invoices</RoundedButton>
               <RoundedButton width="93px" hoverBackgroundColor="#53B87D" onClick={() => navigate('accounts')}>Accounts</RoundedButton> 
              </Payments>  
@@ -442,85 +354,8 @@ const handleUpdateInvoice = (invoice) => {
             </>        
           }
           {error && <ErrorMessage>{error}</ErrorMessage>}
- {/*
-          <InvoiceViewer
-            isOpen={modalOpen}
-            onClose={() => setModalOpen(false)}
-            invoices={invoices}
-            loading={loading}
-            error={error}
-            handleDeleteInvoice={handleDeleteInvoice}
-            handleUpdateInvoice={handleUpdateInvoice}
-          />
- */}
-       {/*     {createModalOpen && (
-            <ModalBackdrop width="100%" onClick={() => setCreateModalOpen(false)}>
-              <Modal onClick={e => e.stopPropagation()}>
-                <h2>{isUpdating ? 'Update Invoice' : 'Create New Invoice'}</h2>
-                <form onSubmit={handleSubmit} style={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
-                  <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
-                    <FormRow style={{ flex: '1 1 200px', minWidth: '200px' }}>
-                      <Label htmlFor="CustomerId">Customer ID</Label>
-                      <Input id="CustomerId" name="customer_id" type="number" value={newInvoice.customer_id}
-                        onChange={handleInvoiceChange} required />
-                    </FormRow>
-                    <FormRow style={{ flex: '1 1 200px', minWidth: '200px' }}>
-                      <Label htmlFor="Date">Date</Label>
-                      <Input id="Date" name="date" type="date" value={newInvoice.date}
-                        onChange={handleInvoiceChange} required />
-                    </FormRow>
-                    <FormRow style={{ flex: '1 1 200px', minWidth: '200px' }}>
-                      <Label htmlFor="TaxRate">Tax Rate (decimal)</Label>
-                      <Input id="TaxRate" name="tax_rate" type="number" step="0.01" value={newInvoice.tax_rate}
-                        onChange={handleInvoiceChange} required />
-                    </FormRow>
-                  </div>
-
-                  <h3 style={{ marginBottom: '1px', fontWeight: '700' }}>Invoice Items</h3>
-                  {newInvoice.items.map((item, index) => (
-                    <div key={index} style={{ marginBottom: 15, borderBottom: '2px solid #eee', paddingBottom: 10 }}>
-                      <FormRow style={{ width: '97%'}}>
-                        <Label>Description</Label>
-                        <Textarea name="description" rows="3" value={item.description} required style={{ width: '100%' }}
-                          onChange={(e) => handleItemChange(index, e)} 
-                        />
-                      </FormRow>
-                      <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
-                        <FormRow style={{ flex: '1 1 150px', minWidth: '150px' }}>
-                          <Label>Quantity</Label>
-                          <Input name="quantity" type="number" min="1" value={item.quantity}
-                            onChange={(e) => handleItemChange(index, e)}
-                            required
-                          />
-                        </FormRow>
-                        <FormRow style={{ flex: '1 1 150px', minWidth: '150px' }}>
-                          <Label>Unit Price</Label>
-                          <Input name="unit_price" type="number" step="0.01" min="0" value={item.unit_price}  required
-                            onChange={(e) => handleItemChange(index, e)} 
-                          />
-                        </FormRow>
-                      </div>
-                      {newInvoice.items.length > 1 && (
-                        <SmallButton type="button" onClick={() => removeItem(index)} style={{ marginTop: '8px' }}>
-                          Remove Item
-                        </SmallButton>
-                      )}
-                    </div>
-                  ))}
-
-                  <SmallButton type="button" onClick={addItem}>+ Add Item</SmallButton>
-
-                  <ButtonRow style={{ justifyContent: 'space-between', marginTop: '25px' }}>
-                   <RoundedButton hoverBackgroundColor="orange" color="black" type="submit">{isUpdating ? 'Update Invoice' : 'Create Invoice'}</RoundedButton>
-                  <RoundedButton hoverBackgroundColor="#A4CCF5" color="black" onClick={() => setCreateModalOpen(false)}>Cancel</RoundedButton>
-                  </ButtonRow>
-                </form> 
-              </Modal>
-            </ModalBackdrop>
-          )}   */}
-
-         
-          {isModalOpen && 
+  
+          {isModalOpen && user.roles == 'accountant' && 
           <ModalBackdrop width="100%" isOpen={isModalOpen} >
             <ModalContent>
               <CloseButton onClick={() => {closeModal(); setInvoiceId(0);}}>×</CloseButton>
@@ -532,21 +367,8 @@ const handleUpdateInvoice = (invoice) => {
             </ModalContent>   
           </ModalBackdrop>  
           }
-    {/*      {isModalOpen && invoiceData && (
-            <InvoiceViewer
-              isOpen={isModalOpen}
-              onClose={closeModal}
-              invoices={[invoiceData]}
-              loading={loading}
-              error={error} 
-              handleDeleteInvoice={handleDeleteInvoice}
-              handleUpdateInvoice={(inv) => {
-                closeModal();  
-                handleUpdateInvoice(inv);  
-          }}
-        />
-      )} */}
-            <MainContent>
+ 
+      <MainContent>
           <Outlet />  
       </MainContent>
         </ > 

@@ -90,7 +90,7 @@ const UserLayout = () => {
   return (
     <LayoutContainer> 
         <Navbar style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <NavbarLeft style={{ display: 'flex', alignItems: 'center', fontWeight: 500 }}>Welcome, {user.name}</NavbarLeft> 
+            <NavbarLeft style={{ display: 'flex', alignItems: 'center', color: 'black' }}>Welcome,  <strong> {user.name}</strong> </NavbarLeft> 
             <NavbarRight>
                 {user.roles &&  
                 <> 

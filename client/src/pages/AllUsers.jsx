@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { useGetAllUsersQuery, useDeleteUserMutation } from '../redux/services/apiSlice'; 
+import { useGetAllUsersQuery, useDeleteUserMutation } from '../redux/services/apiSlice';  
 import { useNavigate } from 'react-router-dom'; 
 import styled from 'styled-components';
+import { RoundedButton } from '../components/ui/Buttons'
 
 const PageWrapper = styled.div` 
   display: flex;
@@ -19,20 +20,13 @@ const Title = styled.h1`
   margin-bottom: 20px;
 `;
 
-const UserGrid = styled.div`
-  flex: 1;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 20px;
-  overflow-y: auto;
-  padding: 10px;
-`;
+ 
  const Created= styled.div`  
     font-size: 14px;
     color: #555; 
 `; 
  const Important= styled.div`  
-    padding: 3px; 
+   
     font-size: 19px;
     color: #555; 
     font-weight: 700;
@@ -69,80 +63,24 @@ const FlexRow = styled.div`
   width: 100%;
   justify-content: center;
 `;
-const DeleteButton = styled.button`
-  margin-top: 10px;
-  padding: 6px 10px;
-  font-size: 12px;
-  background-color: crimson;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  align-self: flex-start;
-
-  &:hover {
-    background-color: darkred;
-  }
-`;
- 
-const UpdateButton = styled.button` 
-  margin-top: 10px;
-  padding: 6px 10px;
-  font-size: 12px;
-  background-color: orange;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  align-self: flex-start;
-
-  &:hover {
-    background-color: darkred;
-  }
-`;
- 
-const ButtonWrapper = styled.div` 
-  border-radius: 10px;  
+  
+const ButtonWrapper = styled.div`  
   display: flex;
   flex-wrap: wrap;
   flex-direction: row; 
   cursor: pointer; 
-  gap: 5px;
+  gap: 3px;
+  margin-top: 5px;
 `; 
 
 const AllUsers = () => {
     const navigate = useNavigate();
     const [isModalOpen, setIsModalOpen] = useState(false);  
-    const currentUser = useSelector((state) => state.auth.user); 
-    const [selectedRole, setSelectedRole] = useState('');
-    const [selectedUser, setSelectedUser] = useState(null);
-    const [newPassword, setNewPassword] = useState(''); 
+    const currentUser = useSelector((state) => state.auth.user);  
 
     const { data: users = [], error, isLoading, refetch } = useGetAllUsersQuery(undefined, { refetchOnMountOrArgChange: true });
     const [deleteUser] = useDeleteUserMutation();  
-  console.log(users);
-    useEffect(() => {
-      const fetchRoles = async () => {
-        try {
-          const token = localStorage.getItem('token'); 
-            const response = await fetch('http://localhost:5003/api/HR/admin/all-roles',{
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}` 
-                },
-          });
-          const data = await response.json();  
-        } catch (err) {
-          console.error('Failed to fetch roles', err);
-        }
-      };
-
-      if (isModalOpen) {
-        fetchRoles();
-      }
-    }, [isModalOpen]);
-
+   
     if (isLoading) return <p>Loading...</p>;
     if (error) return <p>Error loading users</p>;
 
@@ -166,7 +104,7 @@ return (
         <FlexRow>
             {users.slice().reverse().map((user) => (
             <UserCard key={user.Id}>
-                <span> {user.Id} </span>
+                <span>ID: {user.Id} </span>
                 <Important>{user.Name}</Important>
                 <Role><strong>{user.Role}</strong></Role>
                 <img src={user.Picture} alt="User Image"
@@ -175,16 +113,16 @@ return (
                 <Created><strong>Created:</strong> {new Date(user.dateCreated).toLocaleString()}</Created>
 
                 <ButtonWrapper>
-                <DeleteButton onClick={(e) => {
-                    e.stopPropagation();
-                    handleDelete(user.id);
-                }}>
-                    Delete
-                </DeleteButton>
+                  <RoundedButton hoverBackground="red" onClick={(e) => {
+                      e.stopPropagation();
+                      handleDelete(user.id);
+                  }}>
+                      Delete
+                  </RoundedButton>
 
-                <UpdateButton onClick={() => navigate(`/edit-user/${user.id}`, { state: user })}>
-                    Update
-                </UpdateButton> 
+                  <RoundedButton hoverBackground="orange" onClick={() => navigate(`/edit-user/${user.id}`, { state: user })}>
+                      Update
+                  </RoundedButton> 
                 </ButtonWrapper>
             </UserCard>
             ))}
