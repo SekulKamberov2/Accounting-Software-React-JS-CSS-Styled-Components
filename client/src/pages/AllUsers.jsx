@@ -95,8 +95,7 @@ const AllUsers = () => {
           }
         }
     };
-
-     
+ 
 return (
     <PageWrapper>
         <Title>All Members</Title>
@@ -110,8 +109,8 @@ return (
                 <img src={user.Picture} alt="User Image"
                     style={{ objectFit: 'cover', width: '150px', height: '150px', borderRadius: '100%', marginTop: '6px' }} />
                 <Important>{user.Email}</Important>
-                <Created><strong>Created:</strong> {new Date(user.dateCreated).toLocaleString()}</Created>
-
+                <Created><strong>Created:</strong> {new Date(user.CreatedAt).toLocaleString()}</Created>
+                                                   
                 <ButtonWrapper>
                   <RoundedButton hoverBackground="red" onClick={(e) => {
                       e.stopPropagation();

@@ -33,20 +33,7 @@ const Input = styled.input`
   margin-top: 0.25rem;
   border: 1px solid #ccc;
   border-radius: 4px;
-`;
-
-const Button = styled.button`
-  padding: 0.5rem 1rem;
-  margin-top: 0.5rem;
-  background-color: #3498db;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  &:hover {
-    background-color: #2980b9;
-  }
-`;
+`; 
 
 const Table = styled.table`
   width: 100%;
@@ -108,11 +95,7 @@ const BankTransactions = () => {
   });
   const [csvFile, setCsvFile] = useState(null);
   const [importErrors, setImportErrors] = useState([]);
-  const [filter, setFilter] = useState('');
-  const [formData, setFormData] = useState({});
-  const [updateEntry, setUpdateEntry] = useState(null);
-  const [deleteEntry, setDeleteEntry] = useState(null);
-  const [success, setSuccess] = useState(false);
+  const [filter, setFilter] = useState(''); 
   const [error, setError] = useState('');
 
   useEffect(() => {

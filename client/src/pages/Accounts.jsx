@@ -4,89 +4,14 @@ import styled from 'styled-components';
 import { SearchInput } from '../components/ui/SearchInput';
 import { PageHeader } from '../components/ui/PageHeader';
 import { PageContainer, ActionsButtonRow, Cell, Items, TableRow, TableHeader, TableWrapper  } from '../components/ui/GridComponents'; 
-
+import { RoundedButton } from '../components/ui/Buttons'
   
-const Container = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  min-width: 300px;
-  width: 80%;
-  margin: 40px auto;
-  padding: 20px;
-  box-sizing: border-box;
-`;
-
- 
-
-const TR = styled.tr`
-  &:hover {
-    background-color: #53B87D;
-  }
-`;
-
-const RoundedButton = styled.button` 
-  padding: 5px 8px;
-  background-color: ${({ backgroundColor }) => backgroundColor || 'transparent'};
-  color: ${({ color }) => color || 'black'};
-  border: 2px solid black;
-  border-radius: 10px;
-  cursor: pointer;
-  font-size: 1rem; 
-  font-weight: ${({ fontWeight }) => fontWeight}; 
-  margin-left: 3px;
-  width: ${({ width }) => width || 'auto'};  
-  transition: background-color 0.3s ease, color 0.3s ease;
-
-  &:hover {
-    background-color: ${({ hoverBackgroundColor }) => hoverBackgroundColor || 'transparent'};
-    border-color: black; 
-  }
-`;
-
 const Title = styled.h2`
   font-size: 26px;
   font-weight: bold;
   margin-bottom: 20px;
-`;
-
-const TitleRow = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 80%;
-  margin-bottom: 20px;
-`;
-
-const SearchInput2 = styled.input`
-  padding: 10px;
-  width: 78%;
-  margin-bottom: 20px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-`;
-
+`; 
  
-
-const Table = styled.table`
-  width: 80%;
-  border-collapse: collapse;
-`;
-
-const Th = styled.th`
-  text-align: left;
-  padding-left: 9px;
-  background-color: #53B87D;
-  height: 10px;
-  border-bottom: 2px solid #ddd;
-  color: black;  
-`;
-
-const Td = styled.td`
-  padding: 10px;
-  border-bottom: 1px solid #eee;
-`;
-
 const NoResults = styled.div`
   margin-top: 20px;
   color: #999;
@@ -144,25 +69,7 @@ const ModalButtonRow = styled.div`
   gap: 10px;
   margin-top: 20px;
 `;
- 
-
-const ModalButton = styled.button`
-  padding: 8px 16px;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
-  font-weight: 600;
-  color: white;
-  background-color: ${({ variant }) =>
-    variant === 'cancel' ? '#777' :
-    variant === 'delete' ? '#E74C3C' :
-    '#27AE60'};
-
-  &:hover {
-    opacity: 0.85;
-  }
-`; 
-
+  
 const Accounts = () => {
   const [accounts, setAccounts] = useState([]);
   const [filter, setFilter] = useState('');
@@ -189,13 +96,26 @@ const Accounts = () => {
   }, []);
 
   useEffect(() => {
-    const filtered = accounts.filter((acc) =>
-      acc.Name.toLowerCase().includes(filter.toLowerCase()) ||
-      acc.Code.toLowerCase().includes(filter.toLowerCase()) ||
-      acc.Type.toLowerCase().includes(filter.toLowerCase())
+  const filtered = accounts.filter((acc) => {
+    if (!filter.trim()) return true;
+ 
+    if (/^\d+$/.test(filter)) { 
+      const searchId = parseInt(filter, 10);
+      if (acc.Id === searchId) {
+        return true;
+      }
+      return false;  
+    }
+ 
+    const searchTerm = filter.toLowerCase();
+    return (
+      acc.Name?.toLowerCase().includes(searchTerm) ||
+      acc.Type?.toLowerCase().includes(searchTerm)
     );
-    setFilteredAccounts(filtered);
-  }, [filter, accounts]);
+  });
+
+  setFilteredAccounts(filtered);
+}, [filter, accounts]);
 
   const handleUpdate = async (id, data) => {
     try {
@@ -310,7 +230,7 @@ const Accounts = () => {
       />   
       <SearchInput
         type="text"
-        placeholder="Search by name, code, or type..."
+        placeholder="Search by id, name, or type..."
         value={filter}
         onChange={(e) => setFilter(e.target.value)}
       />
@@ -335,9 +255,7 @@ const Accounts = () => {
               <Cell>{account.Code}</Cell>
               <Cell>
                 <ActionsButtonRow>
-                  <RoundedButton
-                    width="75px"
-                    hoverBackgroundColor="#53B87D"
+                  <RoundedButton width="75px" hoverBackgroundColor="#53B87D"
                     onClick={() => {
                       setFormData({ Name: account.Name, Type: account.Type, Code: account.Code });
                       setUpdateAccount(account);
@@ -345,9 +263,7 @@ const Accounts = () => {
                   >
                     Update
                   </RoundedButton>
-                  <RoundedButton
-                    width="75px"
-                    hoverBackgroundColor="#E74C3C"
+                  <RoundedButton width="75px" hoverBackgroundColor="#E74C3C"
                     onClick={() => setDeleteAccount(account)}
                   >
                     Delete

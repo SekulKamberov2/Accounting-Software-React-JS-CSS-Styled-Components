@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import ErrorNotification from '../components/ErrorNotification';
-
-// Styled Components
+ import { RoundedButton } from '../components/ui/Buttons'
+ 
 const Container = styled.div`
   display: flex;
   justify-content: center;
@@ -54,27 +54,7 @@ const Input = styled.input`
     outline: none;
   }
 `;
-
-const Button = styled.button`
-  width: 100%;
-  padding: 12px;
-  background-color: #4e9f3d;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  font-size: 16px;
-  cursor: pointer;
-
-  &:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
-  }
-
-  &:hover {
-    background-color: #3b8d2f;
-  }
-`;
-
+ 
 const SuccessMessage = styled.div`
   background-color: #e6ffed;
   padding: 20px;
@@ -97,8 +77,6 @@ const SignUp = () => {
     role: '',
     picture: '',
   });
-
-  const [data, setData] = useState(null);
   const [error, setError] = useState(null);
 
   const handleChange = (e) => {
@@ -111,19 +89,18 @@ const SignUp = () => {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:3010/api/users', {
+      const response = await fetch('http://localhost:3010/api/auth/register', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          ...(token && { Authorization: `Bearer ${token}` }),
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify(userData),
       });
-
+        
       const result = await response.json();
 
       if (response.ok) {
-        setData(result.data);
+        navigate('/signin');
       } else {
         setError(result.error || 'Sign up failed');
       }
@@ -135,49 +112,38 @@ const SignUp = () => {
   return (
     <Container>
       <FormWrapper>
-        {!data ? (
-          <>
-            <Title>Sign Up</Title>
-            {error && <ErrorNotification message={error} />}
-            <form onSubmit={handleSubmit}>
-              <Label htmlFor="UserName">Username:</Label>
-              <Input type="text" required name="name" value={userData.name}
-                onChange={handleChange} 
-              />
+        <Title>Sign Up</Title>
 
-              <Label htmlFor="Email">Email:</Label>
-              <Input type="email" required name="email" value={userData.email}
-                onChange={handleChange} 
-              />
+        {error && <ErrorNotification message={error} />}
 
-              <Label htmlFor="Password">Password:</Label>
-              <Input  type="password" name="password" value={userData.password}  required
-                onChange={handleChange} 
-              /> 
+        <form onSubmit={handleSubmit}>
+          <Label htmlFor="UserName">Username:</Label>
+          <Input type="text" required name="name" value={userData.name}
+            onChange={handleChange} 
+          />
 
-              <Label htmlFor="Role">Role:</Label>
-              <Input  type="text" name="role" value={userData.role} required
-              onChange={handleChange} 
-              /> 
+          <Label htmlFor="Email">Email:</Label>
+          <Input type="email" required name="email" value={userData.email}
+            onChange={handleChange} 
+          />
 
-              <Label htmlFor="Picture">Picture (URL):</Label>
-              <Input type="text" name="picture" value={userData.picture}
-                onChange={handleChange} placeholder="https://example.com/photo.jpg"
-              />
+          <Label htmlFor="Password">Password:</Label>
+          <Input  type="password" name="password" value={userData.password}  required
+            onChange={handleChange} 
+          /> 
 
-              <Button type="submit">Sign Up</Button>
-            </form>
-          </>
-        ) : (
-          <SuccessMessage>
-            <h3>Employee Created!</h3>
-            <p><Field>ID:</Field> {data.Id}</p>
-            <p><Field>Username:</Field> {data.name}</p>
-            <p><Field>Email:</Field> {data.email}</p> 
-            <p><Field>Picture:</Field> {data.picture}</p>
-            <p><Field>Role:</Field> {data.role}</p>
-          </SuccessMessage>
-        )}
+          <Label htmlFor="Role">Role:</Label>
+          <Input  type="text" name="role" value={userData.role} required
+          onChange={handleChange} 
+          /> 
+
+          <Label htmlFor="Picture">Picture (URL):</Label>
+          <Input type="text" name="picture" value={userData.picture}
+            onChange={handleChange} placeholder="https://somewebaddress.com/photo.jpg"
+          />
+
+           <RoundedButton hoverBackgroundColor="lightGreen" type="submit">Sign Up</RoundedButton>
+        </form>
       </FormWrapper>
     </Container>
   );

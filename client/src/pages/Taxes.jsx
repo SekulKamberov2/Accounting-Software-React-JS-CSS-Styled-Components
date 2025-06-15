@@ -3,8 +3,7 @@ import styled from 'styled-components';
 import { PageContainer, ActionsButtonRow, Cell, Items, TableRow, TableHeader, TableWrapper  } from '../components/ui/GridComponents'; 
 import { PageHeader } from '../components/ui/PageHeader';
 import { SearchInput } from '../components/ui/SearchInput';
- 
-
+  
 const ErrorMessage = styled.div`
   display: flex;
   justify-content: center;
@@ -93,31 +92,7 @@ const ModalButtonRow = styled.div`
   gap: 10px;
   margin-top: 20px;
 `;
-
-const ModalButton = styled.button`
-  padding: 8px 16px;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
-  font-weight: 600;
-  color: white;
-  background-color: ${({ variant }) =>
-    variant === 'cancel' ? '#777' :
-    variant === 'delete' ? '#E74C3C' :
-    '#27AE60'};
-
-  &:hover {
-    opacity: 0.85;
-  }
-`;
-
-const ActionsButtonRow2 = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-top: 20px; 
-`;
-
+ 
 const Taxes = () => {
   const [taxes, setTaxes] = useState([]);
   const [error, setError] = useState("");
@@ -129,26 +104,35 @@ const Taxes = () => {
   const [formData, setFormData] = useState({ name: '', rate: '' }); 
 
   useEffect(() => {
-    (async () => {
-      try {
-        const response = await fetch('http://localhost:3010/api/taxes');
-        if (!response.ok) throw new Error('Failed to fetch taxes');
-        const data = await response.json();
-        console.log(data);
-        setTaxes(data.data);
+  (async () => {
+    try {
+      const response = await fetch('http://localhost:3010/api/taxes');
+      if (!response.ok) setError('Failed to fetch taxes');
+      const data = await response.json(); 
+      setTaxes(data.data);
 
-        const filtered = data.data.filter(tax =>
-          tax.Name.toLowerCase().includes(filter.toLowerCase()) ||
-          tax.Rate.toString().includes(filter)
+      const filtered = data.data.filter(tax => {
+        if (!filter.trim()) return true;
+
+        if (/^\d+$/.test(filter)) {
+          const searchId = parseInt(filter, 10);
+          return tax.Id === searchId;
+        }
+
+        const searchTerm = filter.toLowerCase();
+        return (
+          tax.Name?.toLowerCase().includes(searchTerm) ||
+          tax.Rate?.toString().includes(filter) 
         );
+      });
 
-        setFilteredTaxes(filtered);
-        setError("");
-      } catch (err) {
-        setError(err.message);
-      }
-    })();
-  }, [filter]);
+      setFilteredTaxes(filtered);
+      setError("");
+    } catch (err) {
+      setError(err.message);
+    }
+  })();
+}, [filter]);
 
   const handleUpdate = async (id, data) => {
     try {
@@ -157,7 +141,7 @@ const Taxes = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
-      if (!response.ok) throw new Error('Update failed');
+      if (!response.ok) setError('Update failed');
      
       await refreshData();
       setUpdateTaxItem(null);
@@ -171,8 +155,7 @@ const Taxes = () => {
       const response = await fetch(`http://localhost:3010/api/taxes/${id}`, {
         method: 'DELETE',
       });
-      if (!response.ok) throw new Error('Delete failed');
-      
+      if (!response.ok) setError('Delete failed'); 
       await refreshData();
       setDeleteTaxItem(null);
     } catch (err) {
@@ -188,8 +171,7 @@ const Taxes = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
-      if (!response.ok) throw new Error('Create failed');
-      
+      if (!response.ok) setError('Create failed'); 
       await refreshData();
       setNewTaxModal(false);
       setFormData({ name: '', rate: '' });
@@ -201,10 +183,9 @@ const Taxes = () => {
   const refreshData = async () => {
     try {
       const response = await fetch('http://localhost:3010/api/taxes');
-      if (!response.ok) throw new Error('Failed to fetch taxes');
+      if (!response.ok) setError('Failed to fetch taxes');
       const data = await response.json();
-      setTaxes(data.data);
-
+      setTaxes(data.data); 
       const filtered = data.data.filter(tax =>
         tax.Name.toLowerCase().includes(filter.toLowerCase()) ||
         tax.Rate.toString().includes(filter)
@@ -246,9 +227,8 @@ const Taxes = () => {
             <RoundedButton width="81px" fontWeight="600" hoverBackgroundColor="orange" type="submit">
               Save
             </RoundedButton>
-            <RoundedButton width="81px" fontWeight="600" hoverBackgroundColor="#888DBF" 
-              onClick={() => isNew ? setNewTaxModal(false) : setUpdateTaxItem(null)}
-              type="button"
+            <RoundedButton type="button" width="81px" fontWeight="600" hoverBackgroundColor="#888DBF" 
+              onClick={() => isNew ? setNewTaxModal(false) : setUpdateTaxItem(null)} 
             >
               Cancel
             </RoundedButton> 
@@ -326,9 +306,7 @@ const Taxes = () => {
                     >
                       Update
                     </RoundedButton>
-                    <RoundedButton
-                      width="75px"
-                      hoverBackgroundColor="#E74C3C"
+                    <RoundedButton width="75px" hoverBackgroundColor="#E74C3C"
                       onClick={() => {
                         setDeleteTaxItem(tax);
                         setError(""); 

@@ -3,22 +3,7 @@ import styled from 'styled-components';
 import { PageContainer, ActionsButtonRow, Cell, Items, TableRow, TableHeader, TableWrapper  } from '../components/ui/GridComponents'; 
 import { PageHeader } from '../components/ui/PageHeader';
 import { SearchInput } from '../components/ui/SearchInput';
-
-const Container = styled.div`
-  padding: 2rem;
-  min-width: 300px;
-  width: 70%;
-`;
-
-const TitleRow = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  margin-bottom: 20px;
-  margin: 40px auto;
-`;
-
+  
 const RoundedButton = styled.button`
   padding: 5px 8px;
   background-color: ${({ backgroundColor }) => backgroundColor || 'transparent'};
@@ -36,11 +21,7 @@ const RoundedButton = styled.button`
     background-color: ${({ hoverBackgroundColor }) => hoverBackgroundColor || 'transparent'};
     border-color: black;
   }
-`;
-
-const Title = styled.h2`
-  margin-bottom: 1rem;
-`;
+`; 
 
 const Form = styled.form`
   display: flex;
@@ -66,33 +47,11 @@ const ModalButtonRow = styled.div`
   justify-content: flex-end;
   gap: 10px;
   margin-top: 20px;
-`;
-
-const Table = styled.table`
-  width: 100%;
-  border-collapse: collapse;
-`;
-
-const Th = styled.th`
-  text-align: left;
-  padding: 0.17rem 0.17rem 0.17rem 0.75rem;
-  background-color: #f5f5f5;
-  border-bottom: 2px solid #ddd;
-  background-color: #98CAD4;
-`;
-
-const Td = styled.td`
-  padding: 0.75rem;
-  border-bottom: 1px solid #eee;
-`;
-
+`; 
+  
 const ErrorMsg = styled.p`
   color: #e74c3c;
-`;
-
-const SuccessMsg = styled.p`
-  color: #2ecc71;
-`;
+`; 
 
 const ModalOverlay = styled.div`
   position: fixed;
@@ -115,23 +74,7 @@ const ModalContent = styled.div`
   max-width: 500px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
   position: relative;
-`;
-
-const CloseButton = styled.button`
-  position: absolute;
-  top: 0.5rem;
-  right: 1rem;
-  background: transparent;
-  border: none;
-  font-size: 1.25rem;
-  cursor: pointer;
-`;
-
-const TR = styled.tr`
-  &:hover {
-    background-color: #d2f1f7;
-  }
-`;
+`; 
 
 const Vendors = () => {
   const [vendors, setVendors] = useState([]);
@@ -141,8 +84,7 @@ const Vendors = () => {
     ContactEmail: '',
     phone: ''
   });
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [error, setError] = useState(''); 
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
@@ -152,7 +94,7 @@ const Vendors = () => {
   const fetchVendors = async () => {
     try {
       const res = await fetch('http://localhost:3010/api/vendors');
-      const data = await res.json();
+      const data = await res.json(); 
       setVendors(data.data || []);
     } catch (err) {
       setError('Failed to load vendors');
@@ -166,8 +108,7 @@ const Vendors = () => {
 
   const handleSubmit = async e => {
     e.preventDefault();
-    setError('');
-    setSuccess('');
+    setError(''); 
 
     try {
       const res = await fetch('http://localhost:3010/api/vendors', {
@@ -182,8 +123,7 @@ const Vendors = () => {
       if (!res.ok) {
         setError(result.message || 'Failed to create vendor');
       }
-
-      setSuccess('Vendor created successfully');
+ 
       setFormData({ Name: '', ContactEmail: '', Phone: '' });
       fetchVendors();
       setIsModalOpen(false);
@@ -210,8 +150,7 @@ const Vendors = () => {
         });
 
         const result = await res.json();
-        if (res.ok) {
-          setSuccess(result.message);
+        if (res.ok) { 
           fetchVendors();
         } else {
           setError(result.message);
@@ -222,11 +161,30 @@ const Vendors = () => {
     }
   };
 
-  const filteredVendors = vendors.filter(v =>
-    v.Name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    v.ContactEmail.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    v.Phone.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+ 
+
+  const filteredVendors = vendors.filter(p => {
+    if (!searchTerm.trim()) return true;
+  
+    if (/^\d+$/.test(searchTerm)) {
+      const searchId = parseInt(searchTerm, 10);
+      return (p.Id  === searchId) ? true : false;
+    }
+  
+    if (p.Name?.toLowerCase().includes(searchTerm.toLowerCase())) {
+      return true;
+    }
+
+     if (p.ContactEmail?.toLowerCase().includes(searchTerm.toLowerCase())) {
+      return true;
+    }
+
+     if (p.Phone?.toLowerCase().includes(searchTerm.toLowerCase())) {
+      return true;
+     }
+
+    return false;
+  });
 
   return (
     <PageContainer> 
@@ -266,25 +224,17 @@ const Vendors = () => {
                 <RoundedButton fontWeight='600' hoverBackgroundColor="#98CAD4" color="black" width="80px" onClick={() => setIsModalOpen(false)}>Close</RoundedButton>
             </ModalButtonRow>   
             
-            {error && <ErrorMsg>{error}</ErrorMsg>}
-            {success && <SuccessMsg>{success}</SuccessMsg>}
+            {error && <ErrorMsg>{error}</ErrorMsg>} 
           </Form>
         </ModalContent>
-      </ModalOverlay>
+      </ModalOverlay> 
 
-{/*    
-      <Label>
-        <Input type="text" placeholder="Search by Name, Email, or Phone" value={searchTerm}
-          onChange={e => setSearchTerm(e.target.value)}
-        />
-      </Label>
-*/}
-        <SearchInput
-          type="text"
-          placeholder="Search by Name, Email, or Phone"
-          value={searchTerm}
-          onChange={e => setSearchTerm(e.target.value)}
-        /> 
+      <SearchInput
+        type="text"
+        placeholder="Search by Name, Email, or Phone"
+        value={searchTerm}
+        onChange={e => setSearchTerm(e.target.value)}
+      /> 
 
         <TableWrapper> 
         <TableHeader backgroundColor="#98CAD4">  

@@ -39,43 +39,8 @@ const Title = styled.h2`
   margin-bottom: 20px;
 `;
 
-const TR = styled.tr`
-  &:hover {
-    background-color: #A4CCF5;
-  }
-`;
-
-const TitleRow = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 80%;
-  margin-bottom: 20px;
-`;
-
-const SearchInput2 = styled.input`
-  padding: 10px;
-  width: 77%;
-  margin-bottom: 20px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-`;
-const Table = styled.table`
-  width: 90%;
-  border-collapse: collapse;
-`;
-const Th = styled.th`
-  text-align: left;
-  padding-left: 9px;
-  background-color: #A4CCF5;
-  height: 10px;
-  border-bottom: 2px solid #ddd;
-  color: black;  
-`;
-const Td = styled.td`
-  padding: 10px;
-  border-bottom: 1px solid #eee;
-`;
+ 
+ 
 const NoResults = styled.div`
   margin-top: 20px;
   color: #999;
@@ -157,18 +122,28 @@ const RecurringInvoices = () => {
       if (!res.ok) throw new Error('Failed to fetch invoices');
       const data = await res.json();
       setInvoices(data);
-      setFilteredInvoices(data);
+      setFilteredInvoices(data); 
     } catch (err) {
       setError(err.message);
     }
   };
  
   useEffect(() => {
-    const filtered = invoices.filter(inv =>
-      String(inv.id).includes(filter) ||
-      String(inv.customerId).includes(filter) ||
-      inv.interval.toLowerCase().includes(filter.toLowerCase())
-    );
+    const filtered = invoices.filter(inv => {
+      if (!filter.trim()) return true;
+ 
+      if (/^\d+$/.test(filter)) {
+        const searchId = parseInt(filter, 10);
+        return inv.id === searchId;
+      }
+ 
+      const searchTerm = filter.toLowerCase();
+      return (
+        inv.interval?.toLowerCase().includes(searchTerm) ||
+        inv.startDate?.toLowerCase().includes(searchTerm)
+      );
+    });
+
     setFilteredInvoices(filtered);
   }, [filter, invoices]);
  

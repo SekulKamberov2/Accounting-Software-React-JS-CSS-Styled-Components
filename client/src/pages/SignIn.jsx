@@ -3,8 +3,8 @@ import { useDispatch } from 'react-redux';
 import { setCredentials } from '../redux/features/auth/authSlice';
 import { useNavigate, Link } from 'react-router-dom';
 import styled from 'styled-components';
+import { RoundedButton } from '../components/ui/Buttons'
 
-// Styled Components
 const Container = styled.div`
   display: flex;
   justify-content: center;
@@ -55,27 +55,7 @@ const Input = styled.input`
     outline: none;
   }
 `;
-
-const Button = styled.button`
-  width: 100%;
-  padding: 12px;
-  background-color: #4e9f3d;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  font-size: 16px;
-  cursor: pointer;
-
-  &:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
-  }
-
-  &:hover {
-    background-color: #3b8d2f;
-  }
-`;
-
+ 
 const ErrorMessage = styled.p`
   color: red;
   margin-bottom: 15px;
@@ -136,9 +116,7 @@ const SignIn = () => {
         dateCreated: new Date(decodedToken.exp * 1000).toLocaleString(),
       };
 
-      dispatch(setCredentials({ token: data.token, user }));
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(user));
+      dispatch(setCredentials({ token: data.token, user })); 
 
       navigate('/profile');
     } catch (err) {
@@ -210,9 +188,9 @@ const SignIn = () => {
             />
           </div>
 
-          <Button type="submit" disabled={loading}>
+          <RoundedButton type="submit" hoverBackgroundColor="lightGreen">
             Sign In
-          </Button>
+          </RoundedButton>
         </form>
 
         <StyledLink to="/signup">

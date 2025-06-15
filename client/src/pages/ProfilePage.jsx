@@ -226,75 +226,21 @@ const ErrorMessage = styled.div`
 `;
   
 const ProfilePage = () => {  
-  const [modalOpen, setModalOpen] = useState(false);
-  const [createModalOpen, setCreateModalOpen] = useState(false); 
+  const [modalOpen, setModalOpen] = useState(false); 
   const [invoices, setInvoices] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-
+  const [error, setError] = useState(null); 
   const [invoiceId, setInvoiceId] = useState('');
   const [invoiceData, setInvoiceData] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false); 
 
-  const [isUpdating, setIsUpdating] = useState(false);
-  const [editingInvoiceId, setEditingInvoiceId] = useState(null);
-
-  const user = useSelector((state) => state.auth.user);
-console.log(user);
+  const user = useSelector((state) => state.auth.user); 
   const ACCOUNTANT = user?.roles === "accountant"; 
   const ADMIN = user?.roles === "admin"; 
+  const USER = user?.roles === "user"; 
+
   const navigate = useNavigate();    
-  
-  const [newInvoice, setNewInvoice] = useState({
-    customer_id: '',
-    date: '',
-    tax_rate: '',
-    items: [
-      { description: '', quantity: '', unit_price: '' }
-    ],
-  }); 
-
-  const handleDeleteInvoice = async (invoiceId) => {
-    if (!window.confirm('Are you sure you want to delete this invoice?')) return;
-
-    try {
-      const response = await fetch(`http://localhost:3010/api/invoices/${invoiceId}`, {
-        method: 'DELETE',
-      });
-
-      if (!response.ok) {
-        setError('Failed to delete invoice');
-      }
- 
-      setInvoices(prev =>
-        prev.filter(invoice => invoice.Id !== invoiceId)
-      );
- 
-    } catch (error) {
-      console.error('Error deleting invoice:', error); 
-    }
-  };
-
-
-  const handleShowInvoices = async () => {
-    setLoading(true);
-    setError(null);
-    setModalOpen(true);
-
-    try {
-      const response = await fetch('http://localhost:3010/api/invoices');
-      if (!response.ok) setError('Failed to fetch invoices');
-      const data = await response.json();
-     
-      setInvoices(data);
-    } catch (err) {
-        setError(err.message || 'Unknown error');
-        setInvoices([]);
-    } finally {
-        setLoading(false);
-    }
-  };
-
+    
   const fetchInvoiceData = async (id) => {
     try { 
       const response = await fetch(`http://localhost:3010/api/invoices/${id}`);
@@ -323,26 +269,23 @@ console.log(user);
     <PageContainer>  
       {user?.id > 0 ?  
         <>  
-          <ProfileHeader>{ ACCOUNTANT ? "Accountant" : ADMIN ? "Admin" : "User" }</ProfileHeader>   
+          <ProfileHeader>{ ACCOUNTANT ? "Accountant" : ADMIN ? "Admin" : "User" }</ProfileHeader>  
+           
           <UserCard>  
             <span><strong>ID: </strong> { user.id}</span> 
             <span>{ user.name}</span>  
-            <img src={user.picture} alt="User Avatar"
-              style={{ width: '200px', height: '200px', borderRadius: '100%' }}
-            /> 
+            <img src={user.picture} alt="User Avatar" style={{width: '200px', height: '200px', borderRadius: '100%'}} /> 
             <span>{ user.email}</span>
-            <span><strong>Created: </strong> { new Date(user.dateCreated).toLocaleString()}</span>
-             
+            <span><strong>Created: </strong> { new Date(user.dateCreated).toLocaleString()}</span> 
           </UserCard> 
+
           {user.roles == 'accountant' && 
           <>  
-             <Payments> 
-                <RoundedButton width="91px" hoverBackgroundColor="#A4CCF5" 
-                  onClick={() => navigate('invoices-page')}>Invoices</RoundedButton>
-              
+            <Payments> 
+              <RoundedButton width="91px" hoverBackgroundColor="#A4CCF5" onClick={() => navigate('invoices-page')}>Invoices</RoundedButton> 
               <RoundedButton width="175px" hoverBackgroundColor="#A4CCF5" onClick={() => navigate('recurring-invoices')}>Recurring Invoices</RoundedButton>
               <RoundedButton width="93px" hoverBackgroundColor="#53B87D" onClick={() => navigate('accounts')}>Accounts</RoundedButton> 
-             </Payments>  
+            </Payments>  
 
             <Payments> 
               <RoundedButton width="67px" hoverBackgroundColor="#888DBF" onClick={() => navigate('taxes')}>Taxes</RoundedButton> 

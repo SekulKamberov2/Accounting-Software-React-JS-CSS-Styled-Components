@@ -3,21 +3,7 @@ import styled from 'styled-components';
 import { PageContainer, ActionsButtonRow, Cell, Items, TableRow, TableHeader, TableWrapper  } from '../components/ui/GridComponents'; 
 import { PageHeader } from '../components/ui/PageHeader';
 import { SearchInput } from '../components/ui/SearchInput';
-
-const Container = styled.div`
-  padding: 2rem;
-  min-width: 300px;
-  width: 70%;
-`;
-
-const TitleRow = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  margin-bottom: 20px;
-  margin: 40px auto;
-`;
+ 
 
 const ModalButtonRow = styled.div`
   display: flex;
@@ -43,11 +29,7 @@ const RoundedButton = styled.button`
     background-color: ${({ hoverBackgroundColor }) => hoverBackgroundColor || 'transparent'};
     border-color: black;
   }
-`;
-
-const Title = styled.h2`
-  margin-bottom: 1rem;
-`;
+`; 
 
 const Form = styled.form`
   display: flex;
@@ -59,16 +41,7 @@ const Label = styled.label`
   display: flex;
   flex-direction: column;
   font-size: 0.9rem;
-`;
-
-const SearchInput2 = styled.input`
-  padding: 10px;
-  width: 97.5%;
-  min-width: 481px;
-  margin-bottom: 20px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-`;
+`; 
 
 const Input = styled.input`
   padding: 0.5rem;
@@ -83,31 +56,11 @@ const Select = styled.select`
   border: 1px solid #ccc;
   border-radius: 4px;
 `; 
-
-const Table = styled.table`
-  width: 100%;
-  border-collapse: collapse;
-`;
-
-const Th = styled.th`
-  text-align: left;
-  padding: 0.17rem 0.17rem 0.17rem 0.75rem;
-  background-color: #F78745;
-  border-bottom: 2px solid #ddd;
-`;
-
-const Td = styled.td`
-  padding: 0.75rem;
-  border-bottom: 1px solid #eee;
-`;
-
+ 
+ 
 const ErrorMsg = styled.p`
   color: #e74c3c;
-`;
-
-const SuccessMsg = styled.p`
-  color: #2ecc71;
-`;
+`; 
 
 const ModalOverlay = styled.div`
   position: fixed;
@@ -131,12 +84,7 @@ const ModalContent = styled.div`
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
   position: relative;
 `; 
-
-const TR = styled.tr`
-  &:hover {
-    background-color: #f7d2ba;
-  }
-`;
+ 
 
 const Payments = () => {
   const [payments, setPayments] = useState([]);
@@ -149,8 +97,7 @@ const Payments = () => {
     date: '',
     method: 'cash'
   });
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [error, setError] = useState(''); 
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
@@ -161,6 +108,7 @@ const Payments = () => {
     try {
       const res = await fetch('http://localhost:3010/api/payments');
       const data = await res.json();
+      console.log(data);
       setPayments(data || []);
     } catch (err) {
       setError('Failed to load payments');
@@ -174,8 +122,7 @@ const Payments = () => {
 
   const handleSubmit = async e => {
     e.preventDefault();
-    setError('');
-    setSuccess('');
+    setError(''); 
 
     const method = editPayment ? 'PUT' : 'POST';
     const url = editPayment
@@ -193,8 +140,7 @@ const Payments = () => {
 
       const result = await res.json();
       if (!res.ok) setError(result.message || 'Failed to save payment');
-
-      setSuccess(editPayment ? 'Payment updated successfully' : 'Payment recorded successfully');
+ 
       setFormData({ invoice_id: '', amount: '', date: '', method: 'cash' });
       setEditPayment(null);
       setIsModalOpen(false);
@@ -211,8 +157,7 @@ const Payments = () => {
       });
 
       if (!res.ok) setError('Failed to delete payment');
-
-      setSuccess('Payment deleted successfully');
+ 
       setDeletePayment(null);
       fetchPayments();
     } catch (err) {
@@ -220,11 +165,29 @@ const Payments = () => {
     }
   };
 
-  const filteredPayments = payments.filter(p =>
-    p.InvoiceId.toString().includes(searchTerm.toLowerCase()) ||
-    p.Method.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    new Date(p.Date).toISOString().split('T')[0].includes(searchTerm)
-  );
+  const filteredPayments = payments.filter(p => {
+    if (!searchTerm.trim()) return true;
+  
+    if (/^\d+$/.test(searchTerm)) {
+      const searchId = parseInt(searchTerm, 10);
+      return (p.InvoiceId  === searchId) ? true : false;
+    }
+  
+    if (p.Method?.toLowerCase().includes(searchTerm.toLowerCase())) {
+      return true;
+    }
+  
+    try {
+      const paymentDate = new Date(p.Date).toISOString().split('T')[0];
+      if (paymentDate.includes(searchTerm)) {
+        return true;
+      }
+    } catch (e) {
+      console.error('Invalid date format:', p.Date);
+    }
+
+    return false;
+  });
 
   return (
     <PageContainer> 
@@ -240,8 +203,7 @@ const Payments = () => {
           setFormData({ invoice_id: '', amount: '', date: '', method: 'cash' });
           setEditPayment(null);
           setIsModalOpen(true);
-          setError('');
-          setSuccess('');
+          setError(''); 
         }}  
       />  
 
@@ -279,10 +241,7 @@ const Payments = () => {
                 </RoundedButton>  
            </ModalButtonRow>   
 
-
-
-            {error && <ErrorMsg>{error}</ErrorMsg>}
-            {success && <SuccessMsg>{success}</SuccessMsg>}
+            {error && <ErrorMsg>{error}</ErrorMsg>} 
           </Form>
         </ModalContent>
       </ModalOverlay>
@@ -306,12 +265,6 @@ const Payments = () => {
           </ModalContent>
         </ModalOverlay>
       )} 
-      
-   {/*   <Label>
-        <SearchInput type="text" placeholder="Search by Invoice ID, Method, or Date" value={searchTerm}
-          onChange={e => setSearchTerm(e.target.value)}
-        />
-      </Label> */} 
 
       <SearchInput
         type="text"
@@ -348,8 +301,7 @@ const Payments = () => {
                       method: p.Method
                     });
                     setIsModalOpen(true);
-                    setError('');
-                    setSuccess('');
+                    setError(''); 
                   }}
                 >
                   Update

@@ -24,51 +24,7 @@ const PageContainer = styled.div`
     padding: 15px; 
   }
 `; 
-
- const TitleRow = styled.div`
-  display: flex; 
-  flex-wrap: nowrap; 
-  justify-content: space-between;
-  align-items: center;
-
-  gap: 1rem;
-  width: 100%;
-  margin-bottom: 20px; 
-`;
-
-const LeftSection = styled.div`
-  flex: 1 1 60%;
-  display: flex;
-  flex-direction: column; 
-`;
-
-const RightSection = styled.div`
-  flex: 1 1 auto;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center; 
-`;
  
-const ProfileHeader = styled.div`
-  font-size: 26px; 
-  font-weight: bold;
-  margin-bottom: 8px; 
-`;
- 
-const ErrorMessage = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center; 
-  color: red;
-  background-color: #ffe5e5;  
-  padding: 10px;
-  min-height: 50px;
-  width: 100%;
-  box-sizing: border-box;
-  border-radius: 4px;
-`;
-
 const FormRow = styled.div`
   margin-bottom: 15px; 
 `;
@@ -91,20 +47,7 @@ const ButtonRow = styled.div`
   gap: 10px;
   margin-top: 10px;
 `;
-
-const SmallButton = styled.button`
-  padding: 6px 12px;
-  border: none;
-  background-color: #0077cc;
-  color: white;
-  border-radius: 6px;
-  cursor: pointer;
-
-  &:hover {
-    background-color: #005fa3;
-  }
-`;
-  
+ 
 const Title = styled.div` 
   color: black;    
   font-size: 21px;
@@ -211,8 +154,6 @@ const UpdateButton = styled.button`
     color: white;
   }
 `;
-
- 
  
 const InvoiceHeader = styled.div`
   display: flex;
@@ -310,30 +251,32 @@ function InvoicePage() {
   }, []);
  
   useEffect(() => {
-    const filtered = invoices.filter(inv => {
-      if (!filter.trim()) return true;
-      
-      const searchTerm = filter.toLowerCase();
-      const numericSearch = !isNaN(filter);
-       
-      if (numericSearch) {
-        return (
-          String(inv.Id).includes(filter) ||
-          String(inv.CustomerId).includes(filter)
-        );
-      }
-       
-      return (
-        (inv.CustomerName && inv.CustomerName.toLowerCase().includes(searchTerm)) ||
-        (inv.Date && inv.Date.toLowerCase().includes(searchTerm)) ||
-        (inv.items && inv.items.some(item => 
-          item.Description && item.Description.toLowerCase().includes(searchTerm)
-        ))
-      );
-    });
+  const filtered = invoices.filter(inv => {
+    if (!filter.trim()) return true;
     
-    setFilteredInvoices(filtered);
-  }, [filter, invoices]);
+    const searchTerm = filter.toLowerCase();
+    const isNumericSearch = !isNaN(parseInt(filter));
+
+    if (isNumericSearch) {
+      const numericFilter = parseInt(filter);
+      return (
+        inv.Id === numericFilter || 
+        inv.items?.some(item => item.Id === numericFilter)
+      );
+    }
+     
+    return (
+      inv.CustomerName?.toLowerCase().includes(searchTerm) ||
+      inv.Date?.toLowerCase().includes(searchTerm) ||
+      inv.items?.some(item => 
+        item.Description?.toLowerCase().includes(searchTerm) ||
+        item.ProductCode?.toLowerCase().includes(searchTerm)
+      )
+    );
+  });
+  
+  setFilteredInvoices(filtered);
+}, [filter, invoices]);
 
   async function fetchInvoices() {
     setLoading(true);

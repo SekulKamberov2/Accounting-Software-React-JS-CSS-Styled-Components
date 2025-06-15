@@ -56,13 +56,12 @@ export const TableRow = styled.div`
   }
 `;
 
-export const Cell = styled.div`
- 
+export const Cell = styled.div` 
   display: flex;
   width: ${({ width }) => width || '100%'};
   align-items: center; 
   word-wrap: break-word; 
-
+  padding: 3px;
   &:first-child { 
     width: 100%;
     min-width: 25px;  
