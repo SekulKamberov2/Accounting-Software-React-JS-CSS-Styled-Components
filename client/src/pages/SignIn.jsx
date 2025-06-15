@@ -119,12 +119,12 @@ const SignIn = () => {
 
       if (!response.ok) {
         const err = await response.json();
-        throw new Error(err.message || 'Login failed');
+        setError(err.message || 'Login failed');
       }
 
       const data = await response.json();
 
-      if (!data.token || !isValidJwt(data.token)) throw new Error('Invalid token received');
+      if (!data.token || !isValidJwt(data.token)) setError('Invalid token received');
 
       const decodedToken = decodeJwt(data.token);
       const user = {

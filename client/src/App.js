@@ -30,20 +30,20 @@ function App() {
         <Route element={<ProtectedRoute roles={['admin', 'user', 'accountant']} />}> 
             
                 <Route element={<UserLayout />}>   
-                        <Route path="/users" element={<AllUsers />} />    
-                        <Route path="/profile" element={<ProfilePage />}>    
-                            <Route path="invoices-page" element={<InvoicePage />} />  
-                            <Route path="payments" element={<Payments />} />   
-                            <Route path="accounts" element={<Accounts />} />  
-                            <Route path="journal-entries" element={<JournalEntry />} />  
-                            <Route path="expenses" element={<Expenses />} />  
-                            <Route path="vendors" element={<Vendors />} />  
-                            <Route path="bank-transactions" element={<BankTransactions />} />  
-                            <Route path="taxes" element={<Taxes />} /> 
-                            <Route path="invoices-page" element={<InvoicePage />} /> 
-                            <Route path="recurring-invoices" element={<RecurringInvoices />} />  
-                        </Route> 
-              </Route>
+                    <Route path="/users" element={<AllUsers />} />    
+                    <Route path="/profile" element={<ProfilePage />}>    
+                        <Route path="invoices-page" element={<InvoicePage />} />  
+                        <Route path="payments" element={<Payments />} />   
+                        <Route path="accounts" element={<Accounts />} />  
+                        <Route path="journal-entries" element={<JournalEntry />} />  
+                        <Route path="expenses" element={<Expenses />} />  
+                        <Route path="vendors" element={<Vendors />} />  
+                        <Route path="bank-transactions" element={<BankTransactions />} />  
+                        <Route path="taxes" element={<Taxes />} /> 
+                        <Route path="invoices-page" element={<InvoicePage />} /> 
+                        <Route path="recurring-invoices" element={<RecurringInvoices />} />  
+                    </Route> 
+                </Route>
 
         </Route> 
 
